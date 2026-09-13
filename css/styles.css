@@ -527,3 +527,590 @@ body {
     padding: var(--space-md);
   }
 }
+
+/* =============================================================
+   DASHBOARD DO ATLETA (ESTILOS MODERNOS)
+============================================================= */
+
+.app-shell.dashboard-mode {
+  padding-bottom: calc(var(--space-2xl) + 70px);
+}
+
+.app-shell.dashboard-mode .hero {
+  display: none;
+}
+
+#screen-dashboard {
+  gap: var(--space-lg);
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Header do Atleta ---------- */
+
+.athlete-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-xs);
+}
+
+.athlete-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.athlete-avatar-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-container) 0%, #ff8c5a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-primary);
+  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 18px;
+  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.35);
+  border: 2px solid var(--surface-high);
+}
+
+.status-online {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 2px solid var(--surface-container);
+}
+
+.athlete-meta h2 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--on-surface);
+  letter-spacing: -0.01em;
+}
+
+.athlete-tagline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--secondary);
+  margin-top: 2px;
+}
+
+.badge-position {
+  background: rgba(255, 107, 53, 0.15);
+  color: var(--primary);
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.athlete-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-container);
+  border: 1px solid var(--surface-high);
+  color: var(--on-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.icon-btn:hover {
+  background: var(--surface-high);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.badge-dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  background: var(--primary-container);
+  border-radius: 50%;
+  border: 2px solid var(--surface-container);
+}
+
+/* ---------- Card Próximo Jogo (Game Day) ---------- */
+
+.gameday-card {
+  position: relative;
+  border-radius: 20px;
+  padding: var(--space-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(255, 107, 53, 0.28), transparent 60%),
+    linear-gradient(145deg, #222530 0%, #161820 100%);
+  border: 1px solid rgba(255, 107, 53, 0.25);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.gameday-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gameday-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 107, 53, 0.2);
+  color: var(--primary);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gameday-pill .pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary-container);
+  box-shadow: 0 0 8px var(--primary-container);
+  animation: pulse 1.6s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.gameday-countdown {
+  font-size: 12px;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.gameday-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--on-surface);
+  line-height: 1.25;
+}
+
+.gameday-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--secondary);
+  margin-top: 4px;
+}
+
+.gameday-location .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--primary);
+}
+
+.gameday-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-xs);
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.player-stack {
+  display: flex;
+  align-items: center;
+}
+
+.player-stack-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #1c1e27;
+  background: var(--surface-high);
+  color: var(--on-surface);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -8px;
+}
+
+.player-stack-avatar:first-child {
+  margin-left: 0;
+  background: var(--primary-container);
+  color: #fff;
+}
+
+.player-count-label {
+  font-size: 12px;
+  color: var(--secondary);
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+.btn-gameday-action {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--primary-container);
+  color: #fff;
+  border: 0;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
+  transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.btn-gameday-action:active {
+  transform: scale(0.96);
+}
+
+/* ---------- Grid de Ações Rápidas ---------- */
+
+.quick-actions-section h3,
+.feed-section h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0 0 var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.quick-btn {
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 12px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--on-surface);
+  text-decoration: none;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.quick-btn:hover {
+  background: var(--surface-high);
+  border-color: rgba(255, 107, 53, 0.3);
+}
+
+.quick-btn:active {
+  transform: scale(0.95);
+}
+
+.quick-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-icon-wrap.orange { background: rgba(255, 107, 53, 0.15); color: #ff6b35; }
+.quick-icon-wrap.yellow { background: rgba(255, 187, 30, 0.15); color: #ffbb1e; }
+.quick-icon-wrap.blue   { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.quick-icon-wrap.green  { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+.quick-btn span.label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.15;
+}
+
+/* ---------- Resumo de Estatísticas ---------- */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat-box {
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--secondary);
+  font-weight: 600;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Feed de Rachões (Partidas Abertas) ---------- */
+
+.feed-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.filter-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.filter-chip {
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.filter-chip.active {
+  background: var(--primary-container);
+  color: #fff;
+  border-color: var(--primary-container);
+}
+
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.match-item {
+  background: var(--surface-container);
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.match-item:hover {
+  border-color: rgba(255, 107, 53, 0.35);
+}
+
+.match-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.match-format-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--on-surface);
+}
+
+.match-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.match-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.match-sub {
+  font-size: 12px;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.match-sub .material-symbols-outlined {
+  font-size: 14px;
+  color: var(--secondary);
+}
+
+.match-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.match-spots {
+  font-size: 12px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.match-spots.urgent {
+  color: #ffbb1e;
+}
+
+.btn-join-match {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: var(--surface-high);
+  color: var(--on-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-join-match:hover {
+  background: var(--primary-container);
+  color: #fff;
+  border-color: var(--primary-container);
+}
+
+.btn-join-match.joined {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border-color: #10b981;
+}
+
+/* ---------- Barra Inferior de Navegação (Bottom Dock) ---------- */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 430px);
+  background: rgba(17, 19, 26, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  z-index: 100;
+}
+
+.app-shell.dashboard-mode ~ .bottom-nav,
+.bottom-nav.active {
+  display: flex;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: 0;
+  color: #838596;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: color 0.15s ease;
+  flex: 1;
+}
+
+.nav-item .material-symbols-outlined {
+  font-size: 22px;
+  transition: transform 0.15s ease;
+}
+
+.nav-item span.nav-text {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.nav-item.active {
+  color: var(--primary-container);
+}
+
+.nav-item.active .material-symbols-outlined {
+  transform: translateY(-2px);
+  font-variation-settings: 'FILL' 1;
+}
+

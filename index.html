@@ -77,6 +77,12 @@
         Ainda não tem conta?
         <button class="link-inline" type="button" onclick="showScreen('signup')">Cadastre-se grátis</button>
       </p>
+
+      <div style="text-align: center; margin-top: 14px;">
+        <button class="link-inline" type="button" style="font-size: 12px; color: var(--secondary); opacity: 0.85;" onclick="enterDemoDashboard()">
+          <span>🏀 Acessar Dashboard (Modo Demonstração)</span>
+        </button>
+      </div>
     </section>
 
     <!-- ============ TELA: CADASTRO ============ -->
@@ -212,7 +218,240 @@
       </div>
     </section>
 
+    <!-- ============ TELA: DASHBOARD DO ATLETA ============ -->
+    <section class="screen" id="screen-dashboard">
+      
+      <!-- 1. Header do Atleta -->
+      <div class="athlete-header">
+        <div class="athlete-profile">
+          <div class="athlete-avatar-wrap">
+            <span id="athlete-initials">NQ</span>
+            <span class="status-online" title="Online"></span>
+          </div>
+          <div class="athlete-meta">
+            <h2 id="athlete-name">Cestinha</h2>
+            <div class="athlete-tagline">
+              <span class="badge-position" id="athlete-pos">Ala-Armador</span>
+              <span>• Nível 4</span>
+            </div>
+          </div>
+        </div>
+        <div class="athlete-actions">
+          <button class="icon-btn" type="button" aria-label="Notificações" onclick="showToast('Você tem 2 novos convites para rachão!', 'success')">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="badge-dot"></span>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Sair da conta" onclick="logout()" title="Sair da conta">
+            <span class="material-symbols-outlined">logout</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Próximo Jogo / Game Day Card -->
+      <div class="gameday-card">
+        <div class="gameday-top">
+          <div class="gameday-pill">
+            <span class="pulse-dot"></span>
+            <span>Hoje • 19:30</span>
+          </div>
+          <span class="gameday-countdown">Começa em 2h 15m</span>
+        </div>
+        
+        <div>
+          <h2 class="gameday-title">Rachão Noturno dos Cestinhas</h2>
+          <div class="gameday-location">
+            <span class="material-symbols-outlined">location_on</span>
+            <span>Quadra Central do Ibirapuera • São Paulo</span>
+          </div>
+        </div>
+
+        <div class="gameday-footer">
+          <div class="player-stack">
+            <div class="player-stack-avatar" title="Você">VC</div>
+            <div class="player-stack-avatar">LM</div>
+            <div class="player-stack-avatar">RD</div>
+            <div class="player-stack-avatar">TC</div>
+            <span class="player-count-label">8/10 atletas</span>
+          </div>
+          <button class="btn-gameday-action" type="button" id="btn-checkin" onclick="toggleCheckin()">
+            <span class="material-symbols-outlined">how_to_reg</span>
+            <span>Check-in Feito</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Ações Rápidas -->
+      <div class="quick-actions-section">
+        <h3>Ações Rápidas</h3>
+        <div class="quick-grid">
+          <button class="quick-btn" type="button" onclick="showToast('Em breve: Criar novo rachão personalizado!', 'success')">
+            <div class="quick-icon-wrap orange">
+              <span class="material-symbols-outlined">add_circle</span>
+            </div>
+            <span class="label">Criar Rachão</span>
+          </button>
+          
+          <button class="quick-btn" type="button" onclick="showToast('Em breve: Mapa de quadras próximas!', 'success')">
+            <div class="quick-icon-wrap yellow">
+              <span class="material-symbols-outlined">stadium</span>
+            </div>
+            <span class="label">Quadras</span>
+          </button>
+
+          <button class="quick-btn" type="button" onclick="showToast('Em breve: Tabela e rankings de torneios!', 'success')">
+            <div class="quick-icon-wrap blue">
+              <span class="material-symbols-outlined">trophy</span>
+            </div>
+            <span class="label">Torneios</span>
+          </button>
+
+          <button class="quick-btn" type="button" onclick="showToast('Em breve: Convidar amigos pelo WhatsApp!', 'success')">
+            <div class="quick-icon-wrap green">
+              <span class="material-symbols-outlined">person_add</span>
+            </div>
+            <span class="label">Convidar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Resumo de Estatísticas -->
+      <div class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-value">28</div>
+            <div class="stat-label">Partidas</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value">21</div>
+            <div class="stat-label">Vitórias</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value">75%</div>
+            <div class="stat-label">Aproveitamento</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Feed de Rachões Abertos -->
+      <div class="feed-section">
+        <h3>
+          <span>Rachões na sua Área</span>
+          <span style="font-size: 12px; color: var(--primary); font-weight: 600; cursor: pointer;" onclick="showToast('Carregando mais partidas...')">Atualizar</span>
+        </h3>
+
+        <!-- Filtros rápidos -->
+        <div class="filter-scroll">
+          <button class="filter-chip active" type="button" onclick="setFilter(this, 'all')">Todos</button>
+          <button class="filter-chip" type="button" onclick="setFilter(this, '3x3')">3x3 Meia Quadra</button>
+          <button class="filter-chip" type="button" onclick="setFilter(this, '5x5')">5x5 Quadra Toda</button>
+          <button class="filter-chip" type="button" onclick="setFilter(this, 'finais')">Fim de Semana</button>
+        </div>
+
+        <!-- Lista de Rachões -->
+        <div class="matches-list" id="matches-container">
+          
+          <div class="match-item" data-category="5x5">
+            <div class="match-header">
+              <span class="match-format-badge">5x5 Quadra Toda</span>
+              <span class="match-time">
+                <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
+                Amanhã • 18:00
+              </span>
+            </div>
+            <div>
+              <h4 class="match-title">Pelada Aberta do Parque Villa-Lobos</h4>
+              <div class="match-sub">
+                <span class="material-symbols-outlined">pin_drop</span>
+                <span>Parque Villa-Lobos • Quadra 2</span>
+              </div>
+            </div>
+            <div class="match-bottom">
+              <span class="match-spots urgent">Faltam apenas 2 vagas</span>
+              <button class="btn-join-match" type="button" onclick="joinMatch(this)">
+                <span>Entrar na Partida</span>
+                <span class="material-symbols-outlined" style="font-size: 14px;">sports_basketball</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="match-item" data-category="3x3">
+            <div class="match-header">
+              <span class="match-format-badge">3x3 Meia Quadra</span>
+              <span class="match-time">
+                <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
+                Sábado • 10:00
+              </span>
+            </div>
+            <div>
+              <h4 class="match-title">Torneio Rápido Rei da Quadra</h4>
+              <div class="match-sub">
+                <span class="material-symbols-outlined">pin_drop</span>
+                <span>Arena Mooca Streetball</span>
+              </div>
+            </div>
+            <div class="match-bottom">
+              <span class="match-spots">Faltam 4 vagas</span>
+              <button class="btn-join-match" type="button" onclick="joinMatch(this)">
+                <span>Entrar na Partida</span>
+                <span class="material-symbols-outlined" style="font-size: 14px;">sports_basketball</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="match-item" data-category="5x5">
+            <div class="match-header">
+              <span class="match-format-badge">5x5 Quadra Toda</span>
+              <span class="match-time">
+                <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
+                Domingo • 16:30
+              </span>
+            </div>
+            <div>
+              <h4 class="match-title">Rachão Clássico de Domingo</h4>
+              <div class="match-sub">
+                <span class="material-symbols-outlined">pin_drop</span>
+                <span>SESC Pompéia • Ginásio Coberto</span>
+              </div>
+            </div>
+            <div class="match-bottom">
+              <span class="match-spots">Faltam 5 vagas</span>
+              <button class="btn-join-match" type="button" onclick="joinMatch(this)">
+                <span>Entrar na Partida</span>
+                <span class="material-symbols-outlined" style="font-size: 14px;">sports_basketball</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
   </div>
+
+  <!-- ============ BARRA DE NAVEGAÇÃO INFERIOR ============ -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-item active" type="button" onclick="setNavActive(this, 'home')">
+      <span class="material-symbols-outlined">home</span>
+      <span class="nav-text">Início</span>
+    </button>
+    <button class="nav-item" type="button" onclick="setNavActive(this, 'matches')">
+      <span class="material-symbols-outlined">sports_basketball</span>
+      <span class="nav-text">Partidas</span>
+    </button>
+    <button class="nav-item" type="button" onclick="setNavActive(this, 'courts')">
+      <span class="material-symbols-outlined">stadium</span>
+      <span class="nav-text">Quadras</span>
+    </button>
+    <button class="nav-item" type="button" onclick="setNavActive(this, 'ranking')">
+      <span class="material-symbols-outlined">leaderboard</span>
+      <span class="nav-text">Ranking</span>
+    </button>
+    <button class="nav-item" type="button" onclick="setNavActive(this, 'profile')">
+      <span class="material-symbols-outlined">person</span>
+      <span class="nav-text">Perfil</span>
+    </button>
+  </nav>
 
   <div class="toast" id="toast"></div>
 
