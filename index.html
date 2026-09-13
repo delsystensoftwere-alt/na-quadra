@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Na Quadra - Acesse sua Conta</title>
+  <meta name="description" content="Acesse sua conta no Na Quadra para agendar horários, gerenciar partidas e jogar com a comunidade do basquete.">
+
+  <!-- Fontes Google e Ícones -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+
+  <!-- Estilos Customizados -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- Hero: identidade visual própria (linhas de quadra em SVG) -->
+    <div class="hero">
+      <svg class="hero-court-lines" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="330" cy="30" r="46" stroke="#ff6b35" stroke-width="2" fill="none" opacity=".35"></circle>
+        <line x1="60" y1="0" x2="60" y2="160" stroke="#e2e2ec" stroke-width="1.5" opacity=".12"></line>
+        <circle cx="60" cy="80" r="34" stroke="#e2e2ec" stroke-width="1.5" fill="none" opacity=".12"></circle>
+        <path d="M0 20 Q40 80 0 140" stroke="#e2e2ec" stroke-width="1.5" fill="none" opacity=".12"></path>
+      </svg>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          <span class="label">Na Quadra</span>
+        </div>
+        <h1 id="hero-title">Bem-vindo de volta às quadras!</h1>
+        <p id="hero-subtitle">Acesse sua conta para continuar jogando.</p>
+      </div>
+    </div>
+
+    <!-- ============ TELA: LOGIN ============ -->
+    <section class="screen active" id="screen-login">
+      <div class="card">
+        <div class="field-group">
+          <label class="field-label" for="login-email"><span>E-mail</span><span class="hint">Obrigatório</span></label>
+          <div class="field">
+            <span class="material-symbols-outlined icon-left">mail</span>
+            <input id="login-email" type="email" placeholder="seu.email@exemplo.com" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="login-password"><span>Senha</span></label>
+          <div class="field has-toggle">
+            <span class="material-symbols-outlined icon-left">lock</span>
+            <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+            <button class="toggle-visibility" type="button" onclick="togglePassword('login-password', this)" aria-label="Mostrar ou ocultar senha">
+              <span class="material-symbols-outlined">visibility_off</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="checkbox-row">
+            <input type="checkbox" id="remember-me">
+            <span class="checkbox-box"><span class="material-symbols-outlined">check</span></span>
+            <span class="checkbox-text">Lembrar de mim</span>
+          </label>
+          <button class="link-inline" type="button" onclick="showScreen('reset')">Esqueceu a senha?</button>
+        </div>
+
+        <button class="btn btn-primary" id="login-button" onclick="login()">
+          <span>Entrar na Quadra</span>
+          <span class="material-symbols-outlined">bolt</span>
+        </button>
+      </div>
+
+      <p class="screen-footer">
+        Ainda não tem conta?
+        <button class="link-inline" type="button" onclick="showScreen('signup')">Cadastre-se grátis</button>
+      </p>
+    </section>
+
+    <!-- ============ TELA: CADASTRO ============ -->
+    <section class="screen" id="screen-signup">
+      <div class="screen-heading">
+        <h1>Junte-se à comunidade do basquete</h1>
+        <p>Crie sua conta em segundos. Você poderá completar seu perfil de atleta depois.</p>
+      </div>
+
+      <div class="card">
+        <div class="field-group">
+          <label class="field-label" for="signup-email"><span>E-mail</span><span class="hint">Obrigatório</span></label>
+          <div class="field">
+            <span class="material-symbols-outlined icon-left">mail</span>
+            <input id="signup-email" type="email" placeholder="seu.email@exemplo.com" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="signup-password"><span>Senha</span><span class="hint">Mín. 6 caracteres</span></label>
+          <div class="field has-toggle">
+            <span class="material-symbols-outlined icon-left">lock</span>
+            <input id="signup-password" type="password" placeholder="Crie uma senha" autocomplete="new-password">
+            <button class="toggle-visibility" type="button" onclick="togglePassword('signup-password', this)" aria-label="Mostrar ou ocultar senha">
+              <span class="material-symbols-outlined">visibility_off</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="signup-password-confirm"><span>Confirmar senha</span></label>
+          <div class="field has-toggle">
+            <span class="material-symbols-outlined icon-left">lock_reset</span>
+            <input id="signup-password-confirm" type="password" placeholder="Repita a senha" autocomplete="new-password">
+            <button class="toggle-visibility" type="button" onclick="togglePassword('signup-password-confirm', this)" aria-label="Mostrar ou ocultar confirmação de senha">
+              <span class="material-symbols-outlined">visibility_off</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="signup-button" onclick="registerUser()">
+          <span>Criar Minha Conta</span>
+          <span class="material-symbols-outlined">sports_basketball</span>
+        </button>
+      </div>
+
+      <p class="screen-footer">
+        Já possui uma conta?
+        <button class="link-inline" type="button" onclick="showScreen('login')">Fazer login</button>
+      </p>
+    </section>
+
+    <!-- ============ TELA: RECUPERAR SENHA ============ -->
+    <section class="screen" id="screen-reset">
+      <div class="top-bar">
+        <button class="back-button" type="button" onclick="showScreen('login')" aria-label="Voltar para o login">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+      </div>
+
+      <div class="screen-heading">
+        <h1>Recuperar Senha</h1>
+        <p id="reset-description">Informe seu e-mail cadastrado. Vamos te enviar um link para redefinir sua senha com segurança.</p>
+      </div>
+
+      <!-- Passo 1: informar e-mail -->
+      <div class="card" id="reset-step-email">
+        <div class="field-group">
+          <label class="field-label" for="reset-email"><span>E-mail de cadastro</span></label>
+          <div class="field">
+            <span class="material-symbols-outlined icon-left">mail</span>
+            <input id="reset-email" type="email" placeholder="ex: atleta@exemplo.com">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="reset-request-button" onclick="requestReset()">
+          <span>Enviar link de recuperação</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- Passo 2: nova senha -->
+      <div class="card hidden" id="reset-step-password">
+        <div class="info-card" style="margin-bottom: 4px;">
+          <div class="info-icon"><span class="material-symbols-outlined">mark_email_unread</span></div>
+          <div>
+            <h3>Verifique seu e-mail</h3>
+            <p>Clique no link que enviamos. Se você abriu esse link agora, o código abaixo já foi preenchido.</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="reset-code"><span>Código do link recebido</span></label>
+          <div class="field">
+            <span class="material-symbols-outlined icon-left">key</span>
+            <input id="reset-code" type="text" placeholder="Colado automaticamente ao abrir o link">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="reset-password"><span>Nova senha</span><span class="hint">Mín. 6 caracteres</span></label>
+          <div class="field has-toggle">
+            <span class="material-symbols-outlined icon-left">lock</span>
+            <input id="reset-password" type="password" placeholder="Crie uma nova senha">
+            <button class="toggle-visibility" type="button" onclick="togglePassword('reset-password', this)" aria-label="Mostrar ou ocultar senha">
+              <span class="material-symbols-outlined">visibility_off</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="reset-password-confirm"><span>Confirmar nova senha</span></label>
+          <div class="field has-toggle">
+            <span class="material-symbols-outlined icon-left">lock_reset</span>
+            <input id="reset-password-confirm" type="password" placeholder="Repita a nova senha">
+            <button class="toggle-visibility" type="button" onclick="togglePassword('reset-password-confirm', this)" aria-label="Mostrar ou ocultar confirmação de senha">
+              <span class="material-symbols-outlined">visibility_off</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="reset-password-button" onclick="resetPassword()">
+          <span>Salvar nova senha</span>
+          <span class="material-symbols-outlined">check</span>
+        </button>
+      </div>
+
+      <div class="info-card" style="margin-top: var(--space-md);">
+        <div class="info-icon"><span class="material-symbols-outlined">schedule</span></div>
+        <div>
+          <h3>O link expira em 30 minutos</h3>
+          <p>Se demorar mais que isso, volte aqui e solicite um novo link.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts da aplicação -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
