@@ -1,56 +1,215 @@
 /**
- * Frontend Na Quadra
- * Lógica de interface, controle de navegação, Dashboard do atleta e eventos.
+ * Frontend Na Quadra - Sistema de Gestão de Torneios e Jogos
+ * Arquitetura de Tela Única baseada em Grupos de Visibilidade (visivel=true/false).
  */
 
 let toastTimer = null;
+let timerInterval = null;
+let isTimerRunning = false;
+let matchSeconds = 4 * 60 + 32; // 04:32 inicial
 
-/* -----------------------------
-   Navegação
------------------------------- */
+/* =============================================================
+   1. NAVEGAÇÃO ENTRE SUBGRUPOS (TELA ÚNICA - 1ms DE RESPOSTA)
+============================================================= */
 
-function showScreen(screen) {
-  const appShell = document.querySelector('.app-shell');
-  const bottomNav = document.getElementById('bottom-nav');
+const VIEW_TITLES = {
+  'subview-matches': 'Mesa de Partidas',
+  'subview-athletes': 'Atletas / Cadastro',
+  'subview-teams': 'Equipes & Times',
+  'subview-courts': 'Quadras & Estrutura',
+  'subview-settings': 'Regras do Torneio'
+};
 
-  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-  const target = document.getElementById('screen-' + screen);
-  if (target) target.classList.add('active');
+/**
+ * Alterna entre subgrupos de conteúdo no Dashboard.
+ * Todos os outros recebem visivel=false, apenas o target recebe visivel=true.
+ */
+function navigateTo(subviewId, buttonElement) {
+  // 1. Oculta todos os subgrupos
+  const allSubviews = document.querySelectorAll('.subview-group');
+  allSubviews.forEach(view => view.classList.remove('active'));
 
-  // Ajusta o layout dependendo se é Dashboard ou Auth
-  if (screen === 'dashboard') {
-    if (appShell) appShell.classList.add('dashboard-mode');
-    if (bottomNav) bottomNav.classList.add('active');
-    
-    // Atualiza dados do atleta caso haja sessão salva
-    const session = getStoredSession();
-    if (session && session.email) {
-      updateAthleteProfile(session.email);
-    }
-  } else {
-    if (appShell) appShell.classList.remove('dashboard-mode');
-    if (bottomNav) bottomNav.classList.remove('active');
+  // 2. Torna visível apenas o subgrupo selecionado
+  const targetView = document.getElementById(subviewId);
+  if (targetView) {
+    targetView.classList.add('active');
   }
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // 3. Atualiza o botão ativo na Sidebar
+  document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+  if (buttonElement) {
+    buttonElement.classList.add('active');
+  } else {
+    const defaultBtn = document.querySelector(`[onclick*="${subviewId}"]`);
+    if (defaultBtn) defaultBtn.classList.add('active');
+  }
 
-  const heroTitle = document.getElementById('hero-title');
-  const heroSubtitle = document.getElementById('hero-subtitle');
-  const heroTexts = {
-    login: ['Bem-vindo de volta às quadras!', 'Acesse sua conta para continuar jogando.'],
-    signup: ['Junte-se à comunidade!', 'Crie sua conta e comece a jogar.'],
-    reset: ['Esqueceu a senha?', 'Vamos te ajudar a voltar pra quadra.']
-  };
+  // 4. Atualiza o título da Topbar
+  const pageTitle = document.getElementById('page-title');
+  if (pageTitle && VIEW_TITLES[subviewId]) {
+    pageTitle.textContent = VIEW_TITLES[subviewId];
+  }
 
-  if (heroTexts[screen] && heroTitle && heroSubtitle) {
-    heroTitle.textContent = heroTexts[screen][0];
-    heroSubtitle.textContent = heroTexts[screen][1];
+  // 5. Fecha a sidebar no mobile se estiver aberta
+  const sidebar = document.getElementById('app-sidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
   }
 }
 
-/* -----------------------------
-   Utilidades
------------------------------- */
+/**
+ * Alterna entre os dois grandes blocos: Autenticação vs Dashboard.
+ */
+function switchMainGroup(groupId) {
+  document.querySelectorAll('.view-group').forEach(group => group.classList.remove('active'));
+  const target = document.getElementById(groupId);
+  if (target) target.classList.add('active');
+}
+
+/**
+ * Alterna as telas internas de autenticação (Login, Cadastro, Reset).
+ */
+function showAuthScreen(screenId) {
+  document.querySelectorAll('.auth-screen').forEach(scr => scr.classList.remove('active'));
+  const target = document.getElementById('auth-' + screenId);
+  if (target) target.classList.add('active');
+
+  const titles = {
+    login: ['Acesso ao Sistema', 'Mesa de organização e atletas'],
+    signup: ['Criar Conta', 'Cadastre seu perfil ou equipe'],
+    reset: ['Recuperar Senha', 'Redefina seu acesso']
+  };
+
+  const titleEl = document.getElementById('auth-title');
+  const subEl = document.getElementById('auth-subtitle');
+  if (titles[screenId] && titleEl && subEl) {
+    titleEl.textContent = titles[screenId][0];
+    subEl.textContent = titles[screenId][1];
+  }
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('app-sidebar');
+  if (sidebar) sidebar.classList.toggle('open');
+}
+
+/* =============================================================
+   2. CONTROLES DA MESA DE PARTIDAS (PLACAR E CRONÔMETRO)
+============================================================= */
+
+function addPoints(teamNum, pts) {
+  const scoreEl = document.getElementById('team' + teamNum + '-score');
+  if (!scoreEl) return;
+
+  let current = parseInt(scoreEl.textContent, 10) || 0;
+  current = Math.max(0, current + pts);
+  scoreEl.textContent = current;
+
+  // Feedback visual de ponto
+  scoreEl.style.transform = 'scale(1.15)';
+  setTimeout(() => { scoreEl.style.transform = 'scale(1)'; }, 150);
+}
+
+function toggleTimer() {
+  const timerEl = document.getElementById('match-timer');
+  if (!timerEl) return;
+
+  isTimerRunning = !isTimerRunning;
+
+  if (isTimerRunning) {
+    timerInterval = setInterval(() => {
+      if (matchSeconds > 0) {
+        matchSeconds--;
+        const min = String(Math.floor(matchSeconds / 60)).padStart(2, '0');
+        const sec = String(matchSeconds % 60).padStart(2, '0');
+        timerEl.textContent = `${min}:${sec}`;
+      } else {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        showToast('Fim de tempo de jogo! 🚨', 'error');
+      }
+    }, 1000);
+    showToast('Cronômetro em andamento');
+  } else {
+    clearInterval(timerInterval);
+    showToast('Cronômetro pausado');
+  }
+}
+
+/* =============================================================
+   3. CADASTRO & GESTÃO DE ATLETAS (INSTANTÂNEO)
+============================================================= */
+
+function saveAthlete() {
+  const name = value('ath-name');
+  const nickname = value('ath-nickname');
+  const number = value('ath-number') || '00';
+  const position = document.getElementById('ath-position')?.value || 'Armador';
+  const team = document.getElementById('ath-team')?.value || 'Sem Equipe';
+
+  if (!name) {
+    showToast('Por favor, informe ao menos o nome do atleta.', 'error');
+    return;
+  }
+
+  const tbody = document.getElementById('athletes-table-body');
+  if (!tbody) return;
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><span class="number-chip">${String(number).padStart(2, '0')}</span></td>
+    <td><strong>${escapeHtml(name)}</strong> <span style="color:var(--secondary);">${nickname ? '(' + escapeHtml(nickname) + ')' : ''}</span></td>
+    <td>${escapeHtml(position)}</td>
+    <td>${escapeHtml(team)}</td>
+    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
+    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
+  `;
+
+  tbody.prepend(tr);
+
+  // Limpa campos
+  document.getElementById('ath-name').value = '';
+  document.getElementById('ath-nickname').value = '';
+  document.getElementById('ath-number').value = '';
+
+  updateAthletesCount();
+  showToast(`Atleta ${name} cadastrado com sucesso! 🏀`, 'success');
+}
+
+function removeAthlete(btn) {
+  const row = btn.closest('tr');
+  if (row) {
+    row.remove();
+    updateAthletesCount();
+    showToast('Atleta removido da listagem.');
+  }
+}
+
+function filterAthletes(term) {
+  const filter = (term || '').toLowerCase();
+  const rows = document.querySelectorAll('#athletes-table-body tr');
+
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(filter) ? '' : 'none';
+  });
+}
+
+function updateAthletesCount() {
+  const countEl = document.getElementById('athletes-count');
+  const rows = document.querySelectorAll('#athletes-table-body tr');
+  if (countEl) countEl.textContent = rows.length;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, function (m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+  });
+}
+
+/* =============================================================
+   4. UTILITÁRIOS, SESSÃO E LOGIN
+============================================================= */
 
 function value(id) {
   const el = document.getElementById(id);
@@ -61,30 +220,10 @@ function showToast(message, type = '') {
   const toast = document.getElementById('toast');
   if (!toast) return;
 
-  toast.textContent = message || 'Ocorreu um erro.';
+  toast.textContent = message || 'Aviso';
   toast.className = 'toast show ' + type;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    toast.className = 'toast';
-  }, 4200);
-}
-
-function setLoading(buttonId, loading, loadingText) {
-  const button = document.getElementById(buttonId);
-  if (!button) return;
-
-  if (loading) {
-    button.dataset.originalHtml = button.innerHTML;
-    button.innerHTML = '<span class="spinner"></span><span>' + (loadingText || 'Aguarde...') + '</span>';
-    button.disabled = true;
-  } else {
-    button.innerHTML = button.dataset.originalHtml || button.innerHTML;
-    button.disabled = false;
-  }
-}
-
-function responseMessage(response, fallback) {
-  return response?.message || response?.mensagem || response?.error || response?.erro || fallback;
+  toastTimer = setTimeout(() => { toast.className = 'toast'; }, 3800);
 }
 
 function togglePassword(inputId, button) {
@@ -92,7 +231,6 @@ function togglePassword(inputId, button) {
   if (!input) return;
 
   const icon = button.querySelector('.material-symbols-outlined');
-
   if (input.type === 'password') {
     input.type = 'text';
     if (icon) icon.textContent = 'visibility';
@@ -102,18 +240,9 @@ function togglePassword(inputId, button) {
   }
 }
 
-/* -----------------------------
-   Sessão (Lembrar de mim)
------------------------------- */
-
 function saveSession(sessionData) {
   const remember = document.getElementById('remember-me')?.checked;
-  const payload = JSON.stringify({
-    email: sessionData.email,
-    unique_id: sessionData.unique_id,
-    security_id: sessionData.security_id
-  });
-
+  const payload = JSON.stringify(sessionData);
   try {
     if (remember) {
       localStorage.setItem('naQuadraSession', payload);
@@ -122,9 +251,7 @@ function saveSession(sessionData) {
       sessionStorage.setItem('naQuadraSession', payload);
       localStorage.removeItem('naQuadraSession');
     }
-  } catch (e) {
-    console.warn('Não foi possível salvar sessão no Storage:', e);
-  }
+  } catch (e) {}
 }
 
 function getStoredSession() {
@@ -143,342 +270,114 @@ function clearStoredSession() {
   } catch (e) {}
 }
 
-function updateAthleteProfile(email) {
-  if (!email) return;
-
-  const nameEl = document.getElementById('athlete-name');
-  const initialsEl = document.getElementById('athlete-initials');
-
-  // Extrai nome antes do @ do e-mail
-  const username = email.split('@')[0];
-  const formattedName = username.charAt(0).toUpperCase() + username.slice(1);
-
-  if (nameEl) nameEl.textContent = formattedName;
-  if (initialsEl) initialsEl.textContent = formattedName.slice(0, 2).toUpperCase();
-}
-
-/* -----------------------------
-   LOGIN
------------------------------- */
-
 async function login() {
   const email = value('login-email');
   const senha = value('login-password');
 
   if (!email || !senha) {
-    showToast('Informe seu email e sua senha.', 'error');
+    showToast('Informe seu e-mail e senha.', 'error');
     return;
   }
 
-  setLoading('login-button', true, 'Entrando na Quadra...');
+  const btn = document.getElementById('login-button');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Verificando...</span>';
+  }
 
   try {
     const response = await apiLogin(email, senha);
-    setLoading('login-button', false);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Entrar na Quadra</span><span class="material-symbols-outlined">bolt</span>';
+    }
 
     if (!response.success) {
-      showToast(responseMessage(response, 'Email ou senha inválidos.'), 'error');
+      showToast(response.message || 'Credenciais inválidas.', 'error');
       return;
     }
 
-    const sessionData = {
-      ...response,
-      email: response.email || email
-    };
-
-    saveSession(sessionData);
-    updateAthleteProfile(sessionData.email);
-    showToast('Bem-vindo de volta à quadra!', 'success');
-
-    // Transição suave para o Dashboard
-    setTimeout(() => {
-      showScreen('dashboard');
-    }, 400);
+    saveSession({ email, ...response });
+    updateOperatorHeader(email);
+    showToast('Login efetuado com sucesso!', 'success');
+    switchMainGroup('group-dashboard');
 
   } catch (error) {
-    setLoading('login-button', false);
-    showToast('Erro ao executar o login: ' + (error?.message || error), 'error');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Entrar na Quadra</span><span class="material-symbols-outlined">bolt</span>';
+    }
+    showToast('Erro ao conectar ao servidor.', 'error');
   }
 }
-
-/* -----------------------------
-   LOGOUT
------------------------------- */
 
 function logout() {
   clearStoredSession();
-  showToast('Você saiu da sua conta. Até o próximo jogo!', 'success');
-  showScreen('login');
+  showToast('Sessão encerrada com segurança.');
+  switchMainGroup('group-auth');
+  showAuthScreen('login');
 }
 
-/* -----------------------------
-   CADASTRO
------------------------------- */
+function enterDirectDashboard() {
+  updateOperatorHeader('mesa.torneio@naquadra.com');
+  switchMainGroup('group-dashboard');
+  navigateTo('subview-matches');
+  showToast('Mesa de operação do torneio aberta! 🏀', 'success');
+}
 
-async function registerUser() {
-  const email = value('signup-email');
-  const senha = value('signup-password');
-  const confirmacao = value('signup-password-confirm');
-
-  if (!email || !senha || !confirmacao) {
-    showToast('Preencha todos os campos.', 'error');
-    return;
-  }
-  if (senha.length < 6) {
-    showToast('A senha deve ter pelo menos 6 caracteres.', 'error');
-    return;
-  }
-  if (senha !== confirmacao) {
-    showToast('As senhas não são iguais.', 'error');
-    return;
-  }
-
-  setLoading('signup-button', true, 'Criando...');
-
-  try {
-    const response = await apiRegister(email, senha);
-    setLoading('signup-button', false);
-
-    if (!response.success) {
-      showToast(responseMessage(response, 'Não foi possível criar a conta.'), 'error');
-      return;
-    }
-
-    showToast('Conta criada com sucesso!', 'success');
-
-    document.getElementById('login-email').value = email;
-    document.getElementById('login-password').value = '';
-    document.getElementById('signup-email').value = '';
-    document.getElementById('signup-password').value = '';
-    document.getElementById('signup-password-confirm').value = '';
-
-    setTimeout(() => showScreen('login'), 700);
-  } catch (error) {
-    setLoading('signup-button', false);
-    showToast('Erro ao criar a conta: ' + (error?.message || error), 'error');
+function updateOperatorHeader(email) {
+  const nameEl = document.getElementById('dash-user-name');
+  const avatarEl = document.getElementById('dash-user-avatar');
+  if (email) {
+    const name = email.split('@')[0];
+    const cleanName = name.charAt(0).toUpperCase() + name.slice(1);
+    if (nameEl) nameEl.textContent = cleanName;
+    if (avatarEl) avatarEl.textContent = cleanName.slice(0, 2).toUpperCase();
   }
 }
 
-/* -----------------------------
-   RESET - Solicitar Link
------------------------------- */
-
-async function requestReset() {
-  const email = value('reset-email');
-
-  if (!email) {
-    showToast('Informe o email da sua conta.', 'error');
-    return;
-  }
-
-  setLoading('reset-request-button', true, 'Enviando...');
-
-  try {
-    const response = await apiRequestReset(email);
-    setLoading('reset-request-button', false);
-
-    showToast(
-      responseMessage(response, 'Se o e-mail existir, enviamos as instruções.'),
-      response.success ? 'success' : 'error'
-    );
-
-    if (response.success) {
-      goToResetStepPassword();
-    }
-  } catch (error) {
-    setLoading('reset-request-button', false);
-    showToast('Erro ao solicitar recuperação: ' + (error?.message || error), 'error');
+function updateClock() {
+  const clockEl = document.getElementById('current-clock');
+  if (clockEl) {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    clockEl.textContent = `${h}:${m}`;
   }
 }
 
-function goToResetStepPassword() {
-  document.getElementById('reset-step-email').classList.add('hidden');
-  document.getElementById('reset-step-password').classList.remove('hidden');
-  document.getElementById('reset-description').textContent =
-    'Clique no link que enviamos por e-mail, ou cole o código dele abaixo.';
-}
-
-/* -----------------------------
-   RESET - Salvar Nova Senha
------------------------------- */
-
-async function resetPassword() {
-  const resetId = value('reset-code');
-  const senha = value('reset-password');
-  const confirmacao = value('reset-password-confirm');
-
-  if (!resetId) {
-    showToast('Cole o código recebido no e-mail.', 'error');
-    return;
-  }
-  if (!senha || !confirmacao) {
-    showToast('Preencha todos os campos.', 'error');
-    return;
-  }
-  if (senha.length < 6) {
-    showToast('A senha deve ter pelo menos 6 caracteres.', 'error');
-    return;
-  }
-  if (senha !== confirmacao) {
-    showToast('As senhas não são iguais.', 'error');
-    return;
-  }
-
-  setLoading('reset-password-button', true, 'Salvando...');
-
-  try {
-    const response = await apiResetPassword(resetId, senha);
-    setLoading('reset-password-button', false);
-
-    if (!response.success) {
-      showToast(responseMessage(response, 'Não foi possível redefinir a senha.'), 'error');
-      return;
-    }
-
-    showToast('Senha alterada com sucesso!', 'success');
-    resetResetForm();
-    setTimeout(() => showScreen('login'), 900);
-  } catch (error) {
-    setLoading('reset-password-button', false);
-    showToast('Erro ao redefinir senha: ' + (error?.message || error), 'error');
-  }
-}
-
-function resetResetForm() {
-  document.getElementById('reset-email').value = '';
-  document.getElementById('reset-code').value = '';
-  document.getElementById('reset-password').value = '';
-  document.getElementById('reset-password-confirm').value = '';
-  document.getElementById('reset-step-email').classList.remove('hidden');
-  document.getElementById('reset-step-password').classList.add('hidden');
-  document.getElementById('reset-description').textContent =
-    'Informe seu e-mail cadastrado. Vamos te enviar um link para redefinir sua senha com segurança.';
-}
-
-/* -----------------------------
-   INTERAÇÕES DO DASHBOARD
------------------------------- */
-
-let isCheckedIn = true;
-
-function toggleCheckin() {
-  const btn = document.getElementById('btn-checkin');
-  if (!btn) return;
-
-  isCheckedIn = !isCheckedIn;
-
-  if (isCheckedIn) {
-    btn.innerHTML = '<span class="material-symbols-outlined">how_to_reg</span><span>Check-in Feito</span>';
-    btn.style.background = 'var(--primary-container)';
-    showToast('Presença confirmada no Rachão Noturno! 🏀', 'success');
-  } else {
-    btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Confirmar Presença</span>';
-    btn.style.background = 'var(--surface-high)';
-    showToast('Check-in cancelado.');
-  }
-}
-
-function joinMatch(btn) {
-  const isJoined = btn.classList.contains('joined');
-  const card = btn.closest('.match-item');
-  const spotsEl = card ? card.querySelector('.match-spots') : null;
-
-  if (!isJoined) {
-    btn.classList.add('joined');
-    btn.innerHTML = '<span>Confirmado</span><span class="material-symbols-outlined" style="font-size: 14px;">check</span>';
-    if (spotsEl) {
-      spotsEl.textContent = 'Presença confirmada!';
-      spotsEl.style.color = '#10b981';
-    }
-    showToast('Você entrou no rachão! Te vemos na quadra! 🏀', 'success');
-  } else {
-    btn.classList.remove('joined');
-    btn.innerHTML = '<span>Entrar na Partida</span><span class="material-symbols-outlined" style="font-size: 14px;">sports_basketball</span>';
-    if (spotsEl) {
-      spotsEl.textContent = 'Faltam vagas';
-      spotsEl.style.color = '#10b981';
-    }
-    showToast('Você saiu desta partida.');
-  }
-}
-
-function setFilter(chip, category) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  chip.classList.add('active');
-
-  const matches = document.querySelectorAll('.match-item');
-  matches.forEach(match => {
-    if (category === 'all') {
-      match.style.display = 'flex';
-    } else if (category === '3x3' || category === '5x5') {
-      match.style.display = (match.dataset.category === category) ? 'flex' : 'none';
-    } else {
-      match.style.display = 'flex';
-    }
-  });
-}
-
-function setNavActive(btn, tab) {
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-  btn.classList.add('active');
-
-  if (tab === 'home') {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    const titles = {
-      matches: 'Partidas e Rachões',
-      courts: 'Quadras na Região',
-      ranking: 'Ranking da Temporada',
-      profile: 'Perfil do Atleta'
-    };
-    showToast('Aba "' + (titles[tab] || tab) + '" será conectada em breve!', 'success');
-  }
-}
-
-/* Atalho para desenvolvimento/demo */
-function enterDemoDashboard() {
-  updateAthleteProfile('atleta.campeao@naquadra.com');
-  showScreen('dashboard');
-  showToast('Modo Demonstração do Dashboard ativado! 🏀', 'success');
-}
-
-/* -----------------------------
-   INICIALIZAÇÃO DA PÁGINA
------------------------------- */
+/* =============================================================
+   5. INICIALIZAÇÃO
+============================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const incomingResetId = urlParams.get('reset_id') || urlParams.get('resetId');
+  updateClock();
+  setInterval(updateClock, 30000);
 
-  if (incomingResetId) {
-    showScreen('reset');
-    goToResetStepPassword();
-    const resetCodeInput = document.getElementById('reset-code');
-    if (resetCodeInput) {
-      resetCodeInput.value = incomingResetId;
-    }
+  // Verifica URL com reset de senha
+  const urlParams = new URLSearchParams(window.location.search);
+  const resetId = urlParams.get('reset_id') || urlParams.get('resetId');
+  if (resetId) {
+    switchMainGroup('group-auth');
+    showAuthScreen('reset');
+    const stepEmail = document.getElementById('reset-step-email');
+    const stepPass = document.getElementById('reset-step-password');
+    const codeInput = document.getElementById('reset-code');
+    if (stepEmail) stepEmail.classList.add('hidden');
+    if (stepPass) stepPass.classList.remove('hidden');
+    if (codeInput) codeInput.value = resetId;
     return;
   }
 
-  // Verifica se o usuário já possui sessão ativa
+  // Verifica se há sessão gravada
   const session = getStoredSession();
   if (session && session.email) {
-    updateAthleteProfile(session.email);
-    showScreen('dashboard');
+    updateOperatorHeader(session.email);
+    switchMainGroup('group-dashboard');
+    navigateTo('subview-matches');
   } else {
-    showScreen('login');
+    // Por padrão na mesa do torneio, entra direto no Dashboard pronto para operação
+    switchMainGroup('group-dashboard');
+    navigateTo('subview-matches');
   }
-});
-
-/* -----------------------------
-   Teclado: ENTER para enviar
------------------------------- */
-
-document.addEventListener('keydown', function (event) {
-  if (event.key !== 'Enter') return;
-  const activeScreen = document.querySelector('.screen.active');
-  if (!activeScreen) return;
-
-  if (activeScreen.id === 'screen-login') login();
-  else if (activeScreen.id === 'screen-signup') registerUser();
 });

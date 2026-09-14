@@ -2,460 +2,617 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Na Quadra - Acesse sua Conta</title>
-  <meta name="description" content="Acesse sua conta no Na Quadra para agendar horários, gerenciar partidas e jogar com a comunidade do basquete.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Na Quadra - Gestão de Torneios & Jogos</title>
+  <meta name="description" content="Sistema de gestão de partidas de basquete, torneios, ligas e peladas para mesa de organização e atletas.">
 
-  <!-- Fontes Google e Ícones -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <!-- Google Fonts & Ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
 
-  <!-- Estilos Customizados -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="app-shell">
 
-    <!-- Hero: identidade visual própria (linhas de quadra em SVG) -->
-    <div class="hero">
-      <svg class="hero-court-lines" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="330" cy="30" r="46" stroke="#ff6b35" stroke-width="2" fill="none" opacity=".35"></circle>
-        <line x1="60" y1="0" x2="60" y2="160" stroke="#e2e2ec" stroke-width="1.5" opacity=".12"></line>
-        <circle cx="60" cy="80" r="34" stroke="#e2e2ec" stroke-width="1.5" fill="none" opacity=".12"></circle>
-        <path d="M0 20 Q40 80 0 140" stroke="#e2e2ec" stroke-width="1.5" fill="none" opacity=".12"></path>
-      </svg>
-      <div class="hero-content">
-        <div class="hero-badge">
-          <span class="dot"></span>
-          <span class="label">Na Quadra</span>
-        </div>
-        <h1 id="hero-title">Bem-vindo de volta às quadras!</h1>
-        <p id="hero-subtitle">Acesse sua conta para continuar jogando.</p>
-      </div>
-    </div>
-
-    <!-- ============ TELA: LOGIN ============ -->
-    <section class="screen active" id="screen-login">
-      <div class="card">
-        <div class="field-group">
-          <label class="field-label" for="login-email"><span>E-mail</span><span class="hint">Obrigatório</span></label>
-          <div class="field">
-            <span class="material-symbols-outlined icon-left">mail</span>
-            <input id="login-email" type="email" placeholder="seu.email@exemplo.com" autocomplete="username">
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="login-password"><span>Senha</span></label>
-          <div class="field has-toggle">
-            <span class="material-symbols-outlined icon-left">lock</span>
-            <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
-            <button class="toggle-visibility" type="button" onclick="togglePassword('login-password', this)" aria-label="Mostrar ou ocultar senha">
-              <span class="material-symbols-outlined">visibility_off</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="field-row">
-          <label class="checkbox-row">
-            <input type="checkbox" id="remember-me">
-            <span class="checkbox-box"><span class="material-symbols-outlined">check</span></span>
-            <span class="checkbox-text">Lembrar de mim</span>
-          </label>
-          <button class="link-inline" type="button" onclick="showScreen('reset')">Esqueceu a senha?</button>
-        </div>
-
-        <button class="btn btn-primary" id="login-button" onclick="login()">
-          <span>Entrar na Quadra</span>
-          <span class="material-symbols-outlined">bolt</span>
-        </button>
-      </div>
-
-      <p class="screen-footer">
-        Ainda não tem conta?
-        <button class="link-inline" type="button" onclick="showScreen('signup')">Cadastre-se grátis</button>
-      </p>
-
-      <div style="text-align: center; margin-top: 14px;">
-        <button class="link-inline" type="button" style="font-size: 12px; color: var(--secondary); opacity: 0.85;" onclick="enterDemoDashboard()">
-          <span>🏀 Acessar Dashboard (Modo Demonstração)</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- ============ TELA: CADASTRO ============ -->
-    <section class="screen" id="screen-signup">
-      <div class="screen-heading">
-        <h1>Junte-se à comunidade do basquete</h1>
-        <p>Crie sua conta em segundos. Você poderá completar seu perfil de atleta depois.</p>
-      </div>
-
-      <div class="card">
-        <div class="field-group">
-          <label class="field-label" for="signup-email"><span>E-mail</span><span class="hint">Obrigatório</span></label>
-          <div class="field">
-            <span class="material-symbols-outlined icon-left">mail</span>
-            <input id="signup-email" type="email" placeholder="seu.email@exemplo.com" autocomplete="username">
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="signup-password"><span>Senha</span><span class="hint">Mín. 6 caracteres</span></label>
-          <div class="field has-toggle">
-            <span class="material-symbols-outlined icon-left">lock</span>
-            <input id="signup-password" type="password" placeholder="Crie uma senha" autocomplete="new-password">
-            <button class="toggle-visibility" type="button" onclick="togglePassword('signup-password', this)" aria-label="Mostrar ou ocultar senha">
-              <span class="material-symbols-outlined">visibility_off</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="signup-password-confirm"><span>Confirmar senha</span></label>
-          <div class="field has-toggle">
-            <span class="material-symbols-outlined icon-left">lock_reset</span>
-            <input id="signup-password-confirm" type="password" placeholder="Repita a senha" autocomplete="new-password">
-            <button class="toggle-visibility" type="button" onclick="togglePassword('signup-password-confirm', this)" aria-label="Mostrar ou ocultar confirmação de senha">
-              <span class="material-symbols-outlined">visibility_off</span>
-            </button>
-          </div>
-        </div>
-
-        <button class="btn btn-primary" id="signup-button" onclick="registerUser()">
-          <span>Criar Minha Conta</span>
-          <span class="material-symbols-outlined">sports_basketball</span>
-        </button>
-      </div>
-
-      <p class="screen-footer">
-        Já possui uma conta?
-        <button class="link-inline" type="button" onclick="showScreen('login')">Fazer login</button>
-      </p>
-    </section>
-
-    <!-- ============ TELA: RECUPERAR SENHA ============ -->
-    <section class="screen" id="screen-reset">
-      <div class="top-bar">
-        <button class="back-button" type="button" onclick="showScreen('login')" aria-label="Voltar para o login">
-          <span class="material-symbols-outlined">arrow_back</span>
-        </button>
-      </div>
-
-      <div class="screen-heading">
-        <h1>Recuperar Senha</h1>
-        <p id="reset-description">Informe seu e-mail cadastrado. Vamos te enviar um link para redefinir sua senha com segurança.</p>
-      </div>
-
-      <!-- Passo 1: informar e-mail -->
-      <div class="card" id="reset-step-email">
-        <div class="field-group">
-          <label class="field-label" for="reset-email"><span>E-mail de cadastro</span></label>
-          <div class="field">
-            <span class="material-symbols-outlined icon-left">mail</span>
-            <input id="reset-email" type="email" placeholder="ex: atleta@exemplo.com">
-          </div>
-        </div>
-        <button class="btn btn-primary" id="reset-request-button" onclick="requestReset()">
-          <span>Enviar link de recuperação</span>
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </button>
-      </div>
-
-      <!-- Passo 2: nova senha -->
-      <div class="card hidden" id="reset-step-password">
-        <div class="info-card" style="margin-bottom: 4px;">
-          <div class="info-icon"><span class="material-symbols-outlined">mark_email_unread</span></div>
-          <div>
-            <h3>Verifique seu e-mail</h3>
-            <p>Clique no link que enviamos. Se você abriu esse link agora, o código abaixo já foi preenchido.</p>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="reset-code"><span>Código do link recebido</span></label>
-          <div class="field">
-            <span class="material-symbols-outlined icon-left">key</span>
-            <input id="reset-code" type="text" placeholder="Colado automaticamente ao abrir o link">
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="reset-password"><span>Nova senha</span><span class="hint">Mín. 6 caracteres</span></label>
-          <div class="field has-toggle">
-            <span class="material-symbols-outlined icon-left">lock</span>
-            <input id="reset-password" type="password" placeholder="Crie uma nova senha">
-            <button class="toggle-visibility" type="button" onclick="togglePassword('reset-password', this)" aria-label="Mostrar ou ocultar senha">
-              <span class="material-symbols-outlined">visibility_off</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="reset-password-confirm"><span>Confirmar nova senha</span></label>
-          <div class="field has-toggle">
-            <span class="material-symbols-outlined icon-left">lock_reset</span>
-            <input id="reset-password-confirm" type="password" placeholder="Repita a nova senha">
-            <button class="toggle-visibility" type="button" onclick="togglePassword('reset-password-confirm', this)" aria-label="Mostrar ou ocultar confirmação de senha">
-              <span class="material-symbols-outlined">visibility_off</span>
-            </button>
-          </div>
-        </div>
-
-        <button class="btn btn-primary" id="reset-password-button" onclick="resetPassword()">
-          <span>Salvar nova senha</span>
-          <span class="material-symbols-outlined">check</span>
-        </button>
-      </div>
-
-      <div class="info-card" style="margin-top: var(--space-md);">
-        <div class="info-icon"><span class="material-symbols-outlined">schedule</span></div>
-        <div>
-          <h3>O link expira em 30 minutos</h3>
-          <p>Se demorar mais que isso, volte aqui e solicite um novo link.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ TELA: DASHBOARD DO ATLETA ============ -->
-    <section class="screen" id="screen-dashboard">
+  <!-- =============================================================
+       GRUPO 1: AUTENTICAÇÃO (LOGIN, CADASTRO, RESET)
+  ============================================================= -->
+  <div class="view-group" id="group-auth">
+    <div class="auth-container">
       
-      <!-- 1. Header do Atleta -->
-      <div class="athlete-header">
-        <div class="athlete-profile">
-          <div class="athlete-avatar-wrap">
-            <span id="athlete-initials">NQ</span>
-            <span class="status-online" title="Online"></span>
+      <!-- Hero de Autenticação -->
+      <div class="auth-hero">
+        <svg class="hero-court-lines" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="330" cy="30" r="46" stroke="#ff6b35" stroke-width="2" fill="none" opacity=".35"></circle>
+          <line x1="60" y1="0" x2="60" y2="160" stroke="#e2e2ec" stroke-width="1.5" opacity=".12"></line>
+          <circle cx="60" cy="80" r="34" stroke="#e2e2ec" stroke-width="1.5" fill="none" opacity=".12"></circle>
+        </svg>
+        <div class="auth-hero-content">
+          <div class="auth-badge">
+            <span class="dot"></span>
+            <span>Na Quadra</span>
           </div>
-          <div class="athlete-meta">
-            <h2 id="athlete-name">Cestinha</h2>
-            <div class="athlete-tagline">
-              <span class="badge-position" id="athlete-pos">Ala-Armador</span>
-              <span>• Nível 4</span>
-            </div>
-          </div>
-        </div>
-        <div class="athlete-actions">
-          <button class="icon-btn" type="button" aria-label="Notificações" onclick="showToast('Você tem 2 novos convites para rachão!', 'success')">
-            <span class="material-symbols-outlined">notifications</span>
-            <span class="badge-dot"></span>
-          </button>
-          <button class="icon-btn" type="button" aria-label="Sair da conta" onclick="logout()" title="Sair da conta">
-            <span class="material-symbols-outlined">logout</span>
-          </button>
+          <h1 id="auth-title">Acesso ao Sistema</h1>
+          <p id="auth-subtitle">Mesa de organização e atletas</p>
         </div>
       </div>
 
-      <!-- 2. Próximo Jogo / Game Day Card -->
-      <div class="gameday-card">
-        <div class="gameday-top">
-          <div class="gameday-pill">
-            <span class="pulse-dot"></span>
-            <span>Hoje • 19:30</span>
+      <!-- Subtela: Login -->
+      <section class="auth-screen active" id="auth-login">
+        <div class="auth-card">
+          <div class="field-group">
+            <label class="field-label" for="login-email"><span>E-mail</span><span class="hint">Obrigatório</span></label>
+            <div class="field">
+              <span class="material-symbols-outlined icon-left">mail</span>
+              <input id="login-email" type="email" placeholder="operador@naquadra.com" autocomplete="username">
+            </div>
           </div>
-          <span class="gameday-countdown">Começa em 2h 15m</span>
+
+          <div class="field-group">
+            <label class="field-label" for="login-password"><span>Senha</span></label>
+            <div class="field has-toggle">
+              <span class="material-symbols-outlined icon-left">lock</span>
+              <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+              <button class="toggle-visibility" type="button" onclick="togglePassword('login-password', this)" aria-label="Mostrar senha">
+                <span class="material-symbols-outlined">visibility_off</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label class="checkbox-row">
+              <input type="checkbox" id="remember-me">
+              <span class="checkbox-box"><span class="material-symbols-outlined">check</span></span>
+              <span>Lembrar de mim</span>
+            </label>
+            <button class="link-inline" type="button" onclick="showAuthScreen('reset')">Esqueceu a senha?</button>
+          </div>
+
+          <button class="btn btn-primary" id="login-button" onclick="login()">
+            <span>Entrar na Quadra</span>
+            <span class="material-symbols-outlined">bolt</span>
+          </button>
         </div>
+
+        <p class="auth-footer">
+          Novo organizador ou atleta?
+          <button class="link-inline" type="button" onclick="showAuthScreen('signup')">Cadastre-se</button>
+        </p>
+
+        <div style="text-align: center; margin-top: 10px;">
+          <button class="link-inline" type="button" style="color: var(--secondary); font-size: 12px;" onclick="enterDirectDashboard()">
+            🏀 Abrir Mesa do Torneio (Modo Rápido / Demo)
+          </button>
+        </div>
+      </section>
+
+      <!-- Subtela: Cadastro -->
+      <section class="auth-screen" id="auth-signup">
+        <div class="auth-card">
+          <div class="field-group">
+            <label class="field-label" for="signup-email"><span>E-mail</span><span class="hint">Obrigatório</span></label>
+            <div class="field">
+              <span class="material-symbols-outlined icon-left">mail</span>
+              <input id="signup-email" type="email" placeholder="seu.email@exemplo.com">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="signup-password"><span>Senha</span><span class="hint">Mín. 6 dígitos</span></label>
+            <div class="field has-toggle">
+              <span class="material-symbols-outlined icon-left">lock</span>
+              <input id="signup-password" type="password" placeholder="Crie uma senha">
+              <button class="toggle-visibility" type="button" onclick="togglePassword('signup-password', this)">
+                <span class="material-symbols-outlined">visibility_off</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="signup-password-confirm"><span>Confirmar senha</span></label>
+            <div class="field has-toggle">
+              <span class="material-symbols-outlined icon-left">lock_reset</span>
+              <input id="signup-password-confirm" type="password" placeholder="Repita a senha">
+              <button class="toggle-visibility" type="button" onclick="togglePassword('signup-password-confirm', this)">
+                <span class="material-symbols-outlined">visibility_off</span>
+              </button>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="signup-button" onclick="registerUser()">
+            <span>Criar Conta</span>
+            <span class="material-symbols-outlined">sports_basketball</span>
+          </button>
+        </div>
+
+        <p class="auth-footer">
+          Já tem conta?
+          <button class="link-inline" type="button" onclick="showAuthScreen('login')">Fazer login</button>
+        </p>
+      </section>
+
+      <!-- Subtela: Recuperar Senha -->
+      <section class="auth-screen" id="auth-reset">
+        <div class="auth-card" id="reset-step-email">
+          <div class="field-group">
+            <label class="field-label" for="reset-email"><span>E-mail de cadastro</span></label>
+            <div class="field">
+              <span class="material-symbols-outlined icon-left">mail</span>
+              <input id="reset-email" type="email" placeholder="atleta@exemplo.com">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="reset-request-button" onclick="requestReset()">
+            <span>Enviar link de recuperação</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+
+        <div class="auth-card hidden" id="reset-step-password">
+          <div class="field-group">
+            <label class="field-label" for="reset-code"><span>Código recebido</span></label>
+            <div class="field">
+              <span class="material-symbols-outlined icon-left">key</span>
+              <input id="reset-code" type="text" placeholder="Cole o código">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="reset-password"><span>Nova senha</span></label>
+            <div class="field">
+              <span class="material-symbols-outlined icon-left">lock</span>
+              <input id="reset-password" type="password" placeholder="Nova senha">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="reset-password-button" onclick="resetPassword()">
+            <span>Salvar Nova Senha</span>
+          </button>
+        </div>
+
+        <p class="auth-footer">
+          <button class="link-inline" type="button" onclick="showAuthScreen('login')">← Voltar ao login</button>
+        </p>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- =============================================================
+       GRUPO 2: DASHBOARD WIDESCREEN PARA PC/NOTEBOOK (MESA DE TORNEIO)
+  ============================================================= -->
+  <div class="view-group active" id="group-dashboard">
+
+    <!-- Sidebar Lateral de Navegação (Menu Modular) -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon">
+          <span class="material-symbols-outlined">sports_basketball</span>
+        </div>
+        <span class="brand-name">Na Quadra</span>
+        <span class="brand-badge">MESA</span>
+      </div>
+
+      <!-- Menu Principal: Onde alternamos os subgrupos de visibilidade -->
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Gerenciamento</div>
         
-        <div>
-          <h2 class="gameday-title">Rachão Noturno dos Cestinhas</h2>
-          <div class="gameday-location">
-            <span class="material-symbols-outlined">location_on</span>
-            <span>Quadra Central do Ibirapuera • São Paulo</span>
-          </div>
-        </div>
+        <button class="sidebar-btn active" id="btn-nav-matches" type="button" onclick="navigateTo('subview-matches', this)">
+          <span class="material-symbols-outlined">scoreboard</span>
+          <span>Mesa de Partidas</span>
+        </button>
 
-        <div class="gameday-footer">
-          <div class="player-stack">
-            <div class="player-stack-avatar" title="Você">VC</div>
-            <div class="player-stack-avatar">LM</div>
-            <div class="player-stack-avatar">RD</div>
-            <div class="player-stack-avatar">TC</div>
-            <span class="player-count-label">8/10 atletas</span>
+        <button class="sidebar-btn" id="btn-nav-athletes" type="button" onclick="navigateTo('subview-athletes', this)">
+          <span class="material-symbols-outlined">person_add</span>
+          <span>Atletas / Cadastro</span>
+        </button>
+
+        <button class="sidebar-btn" id="btn-nav-teams" type="button" onclick="navigateTo('subview-teams', this)">
+          <span class="material-symbols-outlined">shield</span>
+          <span>Equipes & Times</span>
+        </button>
+
+        <button class="sidebar-btn" id="btn-nav-courts" type="button" onclick="navigateTo('subview-courts', this)">
+          <span class="material-symbols-outlined">stadium</span>
+          <span>Quadras</span>
+        </button>
+
+        <div class="nav-section-title">Configurações</div>
+
+        <button class="sidebar-btn" id="btn-nav-settings" type="button" onclick="navigateTo('subview-settings', this)">
+          <span class="material-symbols-outlined">tune</span>
+          <span>Regras do Torneio</span>
+        </button>
+      </nav>
+
+      <!-- Rodapé da Sidebar: Usuário / Sair -->
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar" id="dash-user-avatar">NQ</div>
+          <div class="user-meta">
+            <span class="user-name" id="dash-user-name">Mesa Central</span>
+            <span class="user-role">Operador</span>
           </div>
-          <button class="btn-gameday-action" type="button" id="btn-checkin" onclick="toggleCheckin()">
-            <span class="material-symbols-outlined">how_to_reg</span>
-            <span>Check-in Feito</span>
-          </button>
         </div>
+        <button class="icon-btn" type="button" title="Sair do sistema" onclick="logout()" style="width: 32px; height: 32px; border:0; background:transparent; color: var(--secondary); cursor:pointer;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
+        </button>
       </div>
+    </aside>
 
-      <!-- 3. Ações Rápidas -->
-      <div class="quick-actions-section">
-        <h3>Ações Rápidas</h3>
-        <div class="quick-grid">
-          <button class="quick-btn" type="button" onclick="showToast('Em breve: Criar novo rachão personalizado!', 'success')">
-            <div class="quick-icon-wrap orange">
-              <span class="material-symbols-outlined">add_circle</span>
-            </div>
-            <span class="label">Criar Rachão</span>
+    <!-- Área de Conteúdo Principal (Main Content) -->
+    <main class="main-wrapper">
+      
+      <!-- Topbar Superior da Mesa -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" type="button" onclick="toggleSidebar()" aria-label="Abrir Menu">
+            <span class="material-symbols-outlined">menu</span>
           </button>
+          <div class="topbar-title-wrap">
+            <h1 id="page-title">Mesa de Partidas</h1>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="table-clock-badge">
+            <span class="pulse"></span>
+            <span id="current-clock">19:30</span>
+            <span>• Torneio Ativo</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Container dos Subgrupos (Apenas 1 fica com .active por vez) -->
+      <div class="dashboard-content">
+
+        <!-- ==========================================
+             SUBGRUPO 1: MESA DE PARTIDAS (DEFAULT)
+        =========================================== -->
+        <div class="subview-group active" id="subview-matches">
+          <div class="mesa-grid">
+            
+            <!-- Placar ao Vivo Quadra 1 -->
+            <div class="scoreboard-card">
+              <div class="scoreboard-header">
+                <div class="badge-live">
+                  <span class="pulse" style="background:#ef4444; width:6px; height:6px; border-radius:50%;"></span>
+                  <span>Quadra 1 • Ao Vivo</span>
+                </div>
+                <div class="match-period">2º Quarto • 3x3</div>
+              </div>
+
+              <div class="scoreboard-teams">
+                <!-- Time Casa -->
+                <div class="team-box">
+                  <div class="team-badge-circle" style="background: rgba(255, 107, 53, 0.2); color: var(--primary);">
+                    T1
+                  </div>
+                  <h2 class="team-name" id="team1-name">Lakers da Zona Leste</h2>
+                  <div class="team-score" id="team1-score">18</div>
+                </div>
+
+                <!-- Cronômetro Central -->
+                <div class="scoreboard-divider">
+                  <div class="game-timer" id="match-timer">04:32</div>
+                  <div style="display: flex; gap: 6px; margin-top: 6px;">
+                    <button class="btn-point" style="padding: 4px 10px; font-size: 11px;" onclick="toggleTimer()">Pausar / Iniciar</button>
+                  </div>
+                </div>
+
+                <!-- Time Visitante -->
+                <div class="team-box">
+                  <div class="team-badge-circle" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
+                    T2
+                  </div>
+                  <h2 class="team-name" id="team2-name">Mooca Streetball</h2>
+                  <div class="team-score" id="team2-score">15</div>
+                </div>
+              </div>
+
+              <!-- Controles Rápidos da Mesa de Operação -->
+              <div class="scoreboard-actions">
+                <div class="team-controls">
+                  <button class="btn-point" onclick="addPoints(1, 1)">+1</button>
+                  <button class="btn-point" onclick="addPoints(1, 2)">+2</button>
+                  <button class="btn-point" onclick="addPoints(1, 3)">+3</button>
+                  <button class="btn-point" style="color: var(--secondary);" onclick="addPoints(1, -1)">-1</button>
+                </div>
+
+                <div class="team-controls">
+                  <button class="btn-point" onclick="addPoints(2, 1)">+1</button>
+                  <button class="btn-point" onclick="addPoints(2, 2)">+2</button>
+                  <button class="btn-point" onclick="addPoints(2, 3)">+3</button>
+                  <button class="btn-point" style="color: var(--secondary);" onclick="addPoints(2, -1)">-1</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fila de Próximos Jogos -->
+            <div class="next-matches-card">
+              <h3 class="card-title">
+                <span>Próximas Partidas na Fila</span>
+                <span style="font-size: 12px; color: var(--primary); cursor: pointer;" onclick="showToast('Partida finalizada! Avançando a fila...')">Avançar Fila</span>
+              </h3>
+
+              <div class="queue-list">
+                <div class="queue-item">
+                  <div>
+                    <div class="queue-teams">Celtics da Vila vs Cestinhas SP</div>
+                    <div class="queue-time">Quadra 1 • Previsão: 20:00</div>
+                  </div>
+                  <span class="number-chip" style="width: auto; padding: 2px 8px;">Jogo 04</span>
+                </div>
+
+                <div class="queue-item">
+                  <div>
+                    <div class="queue-teams">Bulls do Morumbi vs Ibirapuera Hoops</div>
+                    <div class="queue-time">Quadra 2 • Previsão: 20:15</div>
+                  </div>
+                  <span class="number-chip" style="width: auto; padding: 2px 8px;">Jogo 05</span>
+                </div>
+
+                <div class="queue-item">
+                  <div>
+                    <div class="queue-teams">Rachão das 21h (Equipe A vs Equipe B)</div>
+                    <div class="queue-time">Quadra 1 • Previsão: 20:45</div>
+                  </div>
+                  <span class="number-chip" style="width: auto; padding: 2px 8px;">Jogo 06</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SUBGRUPO 2: CADASTRO E LISTA DE ATLETAS
+        =========================================== -->
+        <div class="subview-group" id="subview-athletes">
+          <div class="athletes-layout">
+            
+            <!-- Painel Esquerdo: Formulário Rápido de Cadastro -->
+            <div class="form-panel">
+              <h3 class="card-title">Novo Atleta</h3>
+
+              <div class="field-group">
+                <label class="field-label" for="ath-name">Nome Completo</label>
+                <div class="field">
+                  <input id="ath-name" type="text" placeholder="Ex: Lucas Ferreira">
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="ath-nickname">Apelido / Como é chamado em quadra</label>
+                <div class="field">
+                  <input id="ath-nickname" type="text" placeholder="Ex: Lucão">
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="field-group">
+                  <label class="field-label" for="ath-number">Número Camisa</label>
+                  <div class="field">
+                    <input id="ath-number" type="number" placeholder="23" min="0" max="99">
+                  </div>
+                </div>
+
+                <div class="field-group">
+                  <label class="field-label" for="ath-position">Posição</label>
+                  <div class="field">
+                    <select id="ath-position">
+                      <option value="Armador">Armador (PG)</option>
+                      <option value="Ala-Armador">Ala-Armador (SG)</option>
+                      <option value="Ala">Ala (SF)</option>
+                      <option value="Ala-Pivô">Ala-Pivô (PF)</option>
+                      <option value="Pivô">Pivô (C)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="ath-team">Equipe / Time</label>
+                <div class="field">
+                  <select id="ath-team">
+                    <option value="Lakers da Zona Leste">Lakers da Zona Leste</option>
+                    <option value="Mooca Streetball">Mooca Streetball</option>
+                    <option value="Celtics da Vila">Celtics da Vila</option>
+                    <option value="Sem Equipe">Avulso / Rachão Aberto</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" type="button" onclick="saveAthlete()">
+                <span class="material-symbols-outlined">person_add</span>
+                <span>Cadastrar Atleta</span>
+              </button>
+            </div>
+
+            <!-- Painel Direito: Tabela Limpa de Atletas Inscritos -->
+            <div class="table-panel">
+              <div class="table-toolbar">
+                <h3 class="card-title">Atletas Cadastrados (<span id="athletes-count">4</span>)</h3>
+                
+                <div class="search-field">
+                  <span class="material-symbols-outlined">search</span>
+                  <input type="text" placeholder="Buscar por nome ou número..." oninput="filterAthletes(this.value)">
+                </div>
+              </div>
+
+              <table class="clean-table">
+                <thead>
+                  <tr>
+                    <th>Nº</th>
+                    <th>Atleta</th>
+                    <th>Posição</th>
+                    <th>Equipe</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="athletes-table-body">
+                  <tr>
+                    <td><span class="number-chip">23</span></td>
+                    <td><strong>Lucas Ferreira</strong> <span style="color:var(--secondary);">(Lucão)</span></td>
+                    <td>Ala-Pivô</td>
+                    <td>Lakers da Zona Leste</td>
+                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
+                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="number-chip">07</span></td>
+                    <td><strong>Rodrigo Mendes</strong> <span style="color:var(--secondary);">(Diguinho)</span></td>
+                    <td>Armador</td>
+                    <td>Mooca Streetball</td>
+                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
+                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="number-chip">11</span></td>
+                    <td><strong>Thiago Castro</strong> <span style="color:var(--secondary);">(Pivete)</span></td>
+                    <td>Ala-Armador</td>
+                    <td>Celtics da Vila</td>
+                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
+                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
+                  </tr>
+                  <tr>
+                    <td><span class="number-chip">30</span></td>
+                    <td><strong>Gabriel Santos</strong> <span style="color:var(--secondary);">(Biel)</span></td>
+                    <td>Pivô</td>
+                    <td>Lakers da Zona Leste</td>
+                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
+                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SUBGRUPO 3: EQUIPES & TIMES
+        =========================================== -->
+        <div class="subview-group" id="subview-teams">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 class="card-title">Equipes Inscritas no Torneio</h3>
+            <button class="btn btn-primary" style="width: auto; padding: 8px 18px;" onclick="showToast('Em breve: Formulário de nova equipe!', 'success')">
+              <span class="material-symbols-outlined">add</span>
+              <span>Nova Equipe</span>
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+            <div class="auth-card" style="padding: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="team-badge-circle" style="background: rgba(255, 107, 53, 0.2); color: var(--primary);">LZL</div>
+                <div>
+                  <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Lakers da Zona Leste</h4>
+                  <span style="font-size:12px; color:var(--secondary);">6 Atletas inscritos</span>
+                </div>
+              </div>
+              <div style="margin-top: 12px; display:flex; justify-content:space-between; font-size:13px; color:var(--secondary); border-top:1px solid var(--border); padding-top:8px;">
+                <span>Vitórias: <strong>3</strong></span>
+                <span>Saldo: <strong>+18 pts</strong></span>
+              </div>
+            </div>
+
+            <div class="auth-card" style="padding: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="team-badge-circle" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">MSB</div>
+                <div>
+                  <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Mooca Streetball</h4>
+                  <span style="font-size:12px; color:var(--secondary);">5 Atletas inscritos</span>
+                </div>
+              </div>
+              <div style="margin-top: 12px; display:flex; justify-content:space-between; font-size:13px; color:var(--secondary); border-top:1px solid var(--border); padding-top:8px;">
+                <span>Vitórias: <strong>2</strong></span>
+                <span>Saldo: <strong>+8 pts</strong></span>
+              </div>
+            </div>
+
+            <div class="auth-card" style="padding: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="team-badge-circle" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">CDV</div>
+                <div>
+                  <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Celtics da Vila</h4>
+                  <span style="font-size:12px; color:var(--secondary);">5 Atletas inscritos</span>
+                </div>
+              </div>
+              <div style="margin-top: 12px; display:flex; justify-content:space-between; font-size:13px; color:var(--secondary); border-top:1px solid var(--border); padding-top:8px;">
+                <span>Vitórias: <strong>1</strong></span>
+                <span>Saldo: <strong>-4 pts</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================
+             SUBGRUPO 4: QUADRAS & ESTRUTURA
+        =========================================== -->
+        <div class="subview-group" id="subview-courts">
+          <div class="card-title" style="margin-bottom: 8px;">Monitor de Quadras do Torneio</div>
           
-          <button class="quick-btn" type="button" onclick="showToast('Em breve: Mapa de quadras próximas!', 'success')">
-            <div class="quick-icon-wrap yellow">
-              <span class="material-symbols-outlined">stadium</span>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+            <div class="auth-card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Quadra 1 (Principal)</h4>
+                <span class="badge-live">Ocupada</span>
+              </div>
+              <p style="font-size:13px; color:var(--secondary); margin:6px 0;">Piso de Madeira • Oficial FIBA</p>
+              <div style="font-size:13px; color:var(--on-surface);">Jogo Atual: Lakers ZL vs Mooca Streetball</div>
             </div>
-            <span class="label">Quadras</span>
-          </button>
 
-          <button class="quick-btn" type="button" onclick="showToast('Em breve: Tabela e rankings de torneios!', 'success')">
-            <div class="quick-icon-wrap blue">
-              <span class="material-symbols-outlined">trophy</span>
+            <div class="auth-card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Quadra 2</h4>
+                <span style="background:rgba(16,185,129,0.2); color:var(--success); font-weight:700; font-size:11px; padding:3px 8px; border-radius:var(--radius-full);">Disponível</span>
+              </div>
+              <p style="font-size:13px; color:var(--secondary); margin:6px 0;">Piso Modular • 3x3</p>
+              <div style="font-size:13px; color:var(--secondary);">Livre para aquecimento ou próxima rodada</div>
             </div>
-            <span class="label">Torneios</span>
-          </button>
-
-          <button class="quick-btn" type="button" onclick="showToast('Em breve: Convidar amigos pelo WhatsApp!', 'success')">
-            <div class="quick-icon-wrap green">
-              <span class="material-symbols-outlined">person_add</span>
-            </div>
-            <span class="label">Convidar</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 4. Resumo de Estatísticas -->
-      <div class="stats-section">
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div class="stat-value">28</div>
-            <div class="stat-label">Partidas</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value">21</div>
-            <div class="stat-label">Vitórias</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value">75%</div>
-            <div class="stat-label">Aproveitamento</div>
           </div>
         </div>
-      </div>
 
-      <!-- 5. Feed de Rachões Abertos -->
-      <div class="feed-section">
-        <h3>
-          <span>Rachões na sua Área</span>
-          <span style="font-size: 12px; color: var(--primary); font-weight: 600; cursor: pointer;" onclick="showToast('Carregando mais partidas...')">Atualizar</span>
-        </h3>
-
-        <!-- Filtros rápidos -->
-        <div class="filter-scroll">
-          <button class="filter-chip active" type="button" onclick="setFilter(this, 'all')">Todos</button>
-          <button class="filter-chip" type="button" onclick="setFilter(this, '3x3')">3x3 Meia Quadra</button>
-          <button class="filter-chip" type="button" onclick="setFilter(this, '5x5')">5x5 Quadra Toda</button>
-          <button class="filter-chip" type="button" onclick="setFilter(this, 'finais')">Fim de Semana</button>
-        </div>
-
-        <!-- Lista de Rachões -->
-        <div class="matches-list" id="matches-container">
-          
-          <div class="match-item" data-category="5x5">
-            <div class="match-header">
-              <span class="match-format-badge">5x5 Quadra Toda</span>
-              <span class="match-time">
-                <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
-                Amanhã • 18:00
-              </span>
-            </div>
-            <div>
-              <h4 class="match-title">Pelada Aberta do Parque Villa-Lobos</h4>
-              <div class="match-sub">
-                <span class="material-symbols-outlined">pin_drop</span>
-                <span>Parque Villa-Lobos • Quadra 2</span>
+        <!-- ==========================================
+             SUBGRUPO 5: CONFIGURAÇÕES DO TORNEIO
+        =========================================== -->
+        <div class="subview-group" id="subview-settings">
+          <div class="form-panel" style="max-width: 600px;">
+            <h3 class="card-title">Regras Gerais da Mesa</h3>
+            
+            <div class="field-group">
+              <label class="field-label">Duração do Quarto / Jogo</label>
+              <div class="field">
+                <select>
+                  <option>10 minutos (Regra 3x3 FIBA)</option>
+                  <option>12 minutos (4 quartos - 5x5)</option>
+                  <option>Corrido até 21 pontos</option>
+                </select>
               </div>
             </div>
-            <div class="match-bottom">
-              <span class="match-spots urgent">Faltam apenas 2 vagas</span>
-              <button class="btn-join-match" type="button" onclick="joinMatch(this)">
-                <span>Entrar na Partida</span>
-                <span class="material-symbols-outlined" style="font-size: 14px;">sports_basketball</span>
-              </button>
-            </div>
-          </div>
 
-          <div class="match-item" data-category="3x3">
-            <div class="match-header">
-              <span class="match-format-badge">3x3 Meia Quadra</span>
-              <span class="match-time">
-                <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
-                Sábado • 10:00
-              </span>
-            </div>
-            <div>
-              <h4 class="match-title">Torneio Rápido Rei da Quadra</h4>
-              <div class="match-sub">
-                <span class="material-symbols-outlined">pin_drop</span>
-                <span>Arena Mooca Streetball</span>
+            <div class="field-group">
+              <label class="field-label">Limite de Faltas Coletivas</label>
+              <div class="field">
+                <input type="number" value="6" min="1" max="10">
               </div>
             </div>
-            <div class="match-bottom">
-              <span class="match-spots">Faltam 4 vagas</span>
-              <button class="btn-join-match" type="button" onclick="joinMatch(this)">
-                <span>Entrar na Partida</span>
-                <span class="material-symbols-outlined" style="font-size: 14px;">sports_basketball</span>
-              </button>
-            </div>
-          </div>
 
-          <div class="match-item" data-category="5x5">
-            <div class="match-header">
-              <span class="match-format-badge">5x5 Quadra Toda</span>
-              <span class="match-time">
-                <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
-                Domingo • 16:30
-              </span>
-            </div>
-            <div>
-              <h4 class="match-title">Rachão Clássico de Domingo</h4>
-              <div class="match-sub">
-                <span class="material-symbols-outlined">pin_drop</span>
-                <span>SESC Pompéia • Ginásio Coberto</span>
-              </div>
-            </div>
-            <div class="match-bottom">
-              <span class="match-spots">Faltam 5 vagas</span>
-              <button class="btn-join-match" type="button" onclick="joinMatch(this)">
-                <span>Entrar na Partida</span>
-                <span class="material-symbols-outlined" style="font-size: 14px;">sports_basketball</span>
-              </button>
-            </div>
+            <button class="btn btn-primary" type="button" onclick="showToast('Configurações salvas para a mesa!', 'success')">
+              <span>Salvar Regras</span>
+            </button>
           </div>
-
         </div>
-      </div>
 
-    </section>
+      </div>
+    </main>
 
   </div>
 
-  <!-- ============ BARRA DE NAVEGAÇÃO INFERIOR ============ -->
-  <nav class="bottom-nav" id="bottom-nav">
-    <button class="nav-item active" type="button" onclick="setNavActive(this, 'home')">
-      <span class="material-symbols-outlined">home</span>
-      <span class="nav-text">Início</span>
-    </button>
-    <button class="nav-item" type="button" onclick="setNavActive(this, 'matches')">
-      <span class="material-symbols-outlined">sports_basketball</span>
-      <span class="nav-text">Partidas</span>
-    </button>
-    <button class="nav-item" type="button" onclick="setNavActive(this, 'courts')">
-      <span class="material-symbols-outlined">stadium</span>
-      <span class="nav-text">Quadras</span>
-    </button>
-    <button class="nav-item" type="button" onclick="setNavActive(this, 'ranking')">
-      <span class="material-symbols-outlined">leaderboard</span>
-      <span class="nav-text">Ranking</span>
-    </button>
-    <button class="nav-item" type="button" onclick="setNavActive(this, 'profile')">
-      <span class="material-symbols-outlined">person</span>
-      <span class="nav-text">Perfil</span>
-    </button>
-  </nav>
-
   <div class="toast" id="toast"></div>
 
-  <!-- Scripts da aplicação -->
+  <!-- Scripts -->
   <script src="js/api.js"></script>
   <script src="js/app.js"></script>
 </body>
