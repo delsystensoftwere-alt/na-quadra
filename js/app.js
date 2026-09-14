@@ -1,91 +1,68 @@
 /**
- * Frontend Na Quadra - Sistema de Gestão de Torneios e Jogos
- * Arquitetura de Tela Única baseada em Grupos de Visibilidade (visivel=true/false).
+ * Frontend Na Quadra - Gestão de Usuários e Atletas
+ * Telas focadas:
+ * 1. Complete seu Cadastro (Aba USERS)
+ * 2. Cadastro de Atleta (Aba ATLETAS)
  */
 
 let toastTimer = null;
-let timerInterval = null;
-let isTimerRunning = false;
-let matchSeconds = 4 * 60 + 32; // 04:32 inicial
 
 /* =============================================================
-   1. NAVEGAÇÃO ENTRE SUBGRUPOS (TELA ÚNICA - 1ms DE RESPOSTA)
+   1. NAVEGAÇÃO ENTRE SUBGRUPOS (TELA ÚNICA)
 ============================================================= */
 
 const VIEW_TITLES = {
-  'subview-matches': 'Mesa de Partidas',
-  'subview-athletes': 'Atletas / Cadastro',
-  'subview-teams': 'Equipes & Times',
-  'subview-courts': 'Quadras & Estrutura',
-  'subview-settings': 'Regras do Torneio'
+  'subview-complete-profile': 'Complete seu Cadastro (Aba USERS)',
+  'subview-register-athlete': 'Cadastro de Atleta Ativo (Aba ATLETAS)'
 };
 
-/**
- * Alterna entre subgrupos de conteúdo no Dashboard.
- * Todos os outros recebem visivel=false, apenas o target recebe visivel=true.
- */
 function navigateTo(subviewId, buttonElement) {
   // 1. Oculta todos os subgrupos
-  const allSubviews = document.querySelectorAll('.subview-group');
-  allSubviews.forEach(view => view.classList.remove('active'));
+  document.querySelectorAll('.subview-group').forEach(view => view.classList.remove('active'));
 
-  // 2. Torna visível apenas o subgrupo selecionado
+  // 2. Ativa o subgrupo selecionado
   const targetView = document.getElementById(subviewId);
-  if (targetView) {
-    targetView.classList.add('active');
-  }
+  if (targetView) targetView.classList.add('active');
 
-  // 3. Atualiza o botão ativo na Sidebar
+  // 3. Atualiza botão ativo na sidebar
   document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
   if (buttonElement) {
     buttonElement.classList.add('active');
   } else {
-    const defaultBtn = document.querySelector(`[onclick*="${subviewId}"]`);
-    if (defaultBtn) defaultBtn.classList.add('active');
+    const btn = document.querySelector(`[onclick*="${subviewId}"]`);
+    if (btn) btn.classList.add('active');
   }
 
-  // 4. Atualiza o título da Topbar
+  // 4. Atualiza título da topbar
   const pageTitle = document.getElementById('page-title');
   if (pageTitle && VIEW_TITLES[subviewId]) {
     pageTitle.textContent = VIEW_TITLES[subviewId];
   }
 
-  // 5. Fecha a sidebar no mobile se estiver aberta
+  // 5. Se for para a tela de atleta, verifica se a etapa 1 foi concluída
+  if (subviewId === 'subview-register-athlete') {
+    checkAthleteUnlockStatus();
+  }
+
+  // 6. Fecha sidebar no mobile
   const sidebar = document.getElementById('app-sidebar');
   if (sidebar && sidebar.classList.contains('open')) {
     sidebar.classList.remove('open');
   }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/**
- * Alterna entre os dois grandes blocos: Autenticação vs Dashboard.
- */
 function switchMainGroup(groupId) {
   document.querySelectorAll('.view-group').forEach(group => group.classList.remove('active'));
   const target = document.getElementById(groupId);
   if (target) target.classList.add('active');
 }
 
-/**
- * Alterna as telas internas de autenticação (Login, Cadastro, Reset).
- */
 function showAuthScreen(screenId) {
   document.querySelectorAll('.auth-screen').forEach(scr => scr.classList.remove('active'));
   const target = document.getElementById('auth-' + screenId);
   if (target) target.classList.add('active');
-
-  const titles = {
-    login: ['Acesso ao Sistema', 'Mesa de organização e atletas'],
-    signup: ['Criar Conta', 'Cadastre seu perfil ou equipe'],
-    reset: ['Recuperar Senha', 'Redefina seu acesso']
-  };
-
-  const titleEl = document.getElementById('auth-title');
-  const subEl = document.getElementById('auth-subtitle');
-  if (titles[screenId] && titleEl && subEl) {
-    titleEl.textContent = titles[screenId][0];
-    subEl.textContent = titles[screenId][1];
-  }
 }
 
 function toggleSidebar() {
@@ -94,121 +71,415 @@ function toggleSidebar() {
 }
 
 /* =============================================================
-   2. CONTROLES DA MESA DE PARTIDAS (PLACAR E CRONÔMETRO)
+   2. ETAPA 1: COMPLETE SEU CADASTRO (ABA "USERS")
 ============================================================= */
 
-function addPoints(teamNum, pts) {
-  const scoreEl = document.getElementById('team' + teamNum + '-score');
-  if (!scoreEl) return;
+function handleUserPhotoSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
 
-  let current = parseInt(scoreEl.textContent, 10) || 0;
-  current = Math.max(0, current + pts);
-  scoreEl.textContent = current;
-
-  // Feedback visual de ponto
-  scoreEl.style.transform = 'scale(1.15)';
-  setTimeout(() => { scoreEl.style.transform = 'scale(1)'; }, 150);
-}
-
-function toggleTimer() {
-  const timerEl = document.getElementById('match-timer');
-  if (!timerEl) return;
-
-  isTimerRunning = !isTimerRunning;
-
-  if (isTimerRunning) {
-    timerInterval = setInterval(() => {
-      if (matchSeconds > 0) {
-        matchSeconds--;
-        const min = String(Math.floor(matchSeconds / 60)).padStart(2, '0');
-        const sec = String(matchSeconds % 60).padStart(2, '0');
-        timerEl.textContent = `${min}:${sec}`;
-      } else {
-        clearInterval(timerInterval);
-        isTimerRunning = false;
-        showToast('Fim de tempo de jogo! 🚨', 'error');
-      }
-    }, 1000);
-    showToast('Cronômetro em andamento');
-  } else {
-    clearInterval(timerInterval);
-    showToast('Cronômetro pausado');
-  }
-}
-
-/* =============================================================
-   3. CADASTRO & GESTÃO DE ATLETAS (INSTANTÂNEO)
-============================================================= */
-
-function saveAthlete() {
-  const name = value('ath-name');
-  const nickname = value('ath-nickname');
-  const number = value('ath-number') || '00';
-  const position = document.getElementById('ath-position')?.value || 'Armador';
-  const team = document.getElementById('ath-team')?.value || 'Sem Equipe';
-
-  if (!name) {
-    showToast('Por favor, informe ao menos o nome do atleta.', 'error');
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('A imagem deve ter no máximo 5MB.', 'error');
     return;
   }
 
-  const tbody = document.getElementById('athletes-table-body');
-  if (!tbody) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const base64 = e.target.result;
+    document.getElementById('user-image-base64').value = base64;
+    
+    // Atualiza preview
+    const previewImg = document.getElementById('user-image-preview');
+    const fallback = document.getElementById('user-image-fallback');
+    previewImg.src = base64;
+    previewImg.classList.remove('hidden');
+    fallback.classList.add('hidden');
 
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><span class="number-chip">${String(number).padStart(2, '0')}</span></td>
-    <td><strong>${escapeHtml(name)}</strong> <span style="color:var(--secondary);">${nickname ? '(' + escapeHtml(nickname) + ')' : ''}</span></td>
-    <td>${escapeHtml(position)}</td>
-    <td>${escapeHtml(team)}</td>
-    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
-    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
-  `;
-
-  tbody.prepend(tr);
-
-  // Limpa campos
-  document.getElementById('ath-name').value = '';
-  document.getElementById('ath-nickname').value = '';
-  document.getElementById('ath-number').value = '';
-
-  updateAthletesCount();
-  showToast(`Atleta ${name} cadastrado com sucesso! 🏀`, 'success');
+    showToast('Foto selecionada com sucesso!', 'success');
+  };
+  reader.readAsDataURL(file);
 }
 
-function removeAthlete(btn) {
-  const row = btn.closest('tr');
-  if (row) {
-    row.remove();
-    updateAthletesCount();
-    showToast('Atleta removido da listagem.');
+function handleUserUrlInput(url) {
+  const previewImg = document.getElementById('user-image-preview');
+  const fallback = document.getElementById('user-image-fallback');
+
+  if (url && url.startsWith('http')) {
+    previewImg.src = url;
+    previewImg.classList.remove('hidden');
+    fallback.classList.add('hidden');
+  } else {
+    previewImg.classList.add('hidden');
+    fallback.classList.remove('hidden');
   }
 }
 
-function filterAthletes(term) {
-  const filter = (term || '').toLowerCase();
-  const rows = document.querySelectorAll('#athletes-table-body tr');
-
-  rows.forEach(row => {
-    const text = row.textContent.toLowerCase();
-    row.style.display = text.includes(filter) ? '' : 'none';
-  });
+function calcUserAge(dobString) {
+  if (!dobString) return;
+  const dob = new Date(dobString);
+  const diff = Date.now() - dob.getTime();
+  const ageDate = new Date(diff);
+  const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+  return isNaN(age) ? '' : age;
 }
 
-function updateAthletesCount() {
-  const countEl = document.getElementById('athletes-count');
-  const rows = document.querySelectorAll('#athletes-table-body tr');
-  if (countEl) countEl.textContent = rows.length;
+async function saveUserProfile() {
+  const nome = value('user-name');
+  const conta = document.getElementById('user-conta')?.value || 'Atleta';
+  const dob = value('user-dob');
+  const telefone = value('user-phone');
+  const endereco = value('user-address');
+  const numero = value('user-number');
+  const bairro = value('user-bairro');
+  const cidade = value('user-city');
+  const uf = document.getElementById('user-uf')?.value || 'SP';
+  const urlImagem = value('user-image-url');
+  const imagemBase64 = value('user-image-base64');
+
+  if (!nome) {
+    showToast('Por favor, preencha o seu Nome Completo.', 'error');
+    return;
+  }
+
+  const session = getStoredSession() || {};
+  const uniqueId = session.unique_id || 'DEMO_USER_' + Date.now();
+  const securityId = session.security_id || '';
+
+  const userData = {
+    Nome: nome,
+    conta: conta,
+    data_de_Nascimento: dob,
+    Telefone: telefone,
+    Endereço: endereco,
+    Numero: numero,
+    Bairro: bairro,
+    Cidade: cidade,
+    UF: uf,
+    Ativo: 'TRUE',
+    Url_Imagem: urlImagem,
+    Imagem: imagemBase64 || urlImagem
+  };
+
+  const btn = document.getElementById('btn-save-user-profile');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Salvando no servidor...</span>';
+  }
+
+  try {
+    // Se houver sessão real conectada, envia para a API na aba USERS
+    if (session.security_id) {
+      const response = await apiUpdateUser(uniqueId, userData, securityId);
+      if (!response.success) {
+        showToast(response.message || 'Erro ao atualizar dados.', 'error');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined">save</span><span>Salvar e Concluir Cadastro</span>';
+        }
+        return;
+      }
+    }
+
+    // Salva localmente o estado de perfil completo
+    const updatedSession = {
+      ...session,
+      unique_id: uniqueId,
+      profileCompleted: true,
+      userData: userData
+    };
+    saveSession(updatedSession);
+
+    // Atualiza badges visuais
+    markStep1Completed(userData);
+
+    showToast('Cadastro de usuário concluído com sucesso! Etapa 1 pronta.', 'success');
+
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined">check</span><span>Cadastro Concluído!</span>';
+    }
+
+    // Pré-preenche os dados na Etapa 2 (Atleta)
+    populateAthleteFromUser(userData);
+
+    // Redireciona para a Etapa 2 após 600ms
+    setTimeout(() => {
+      navigateTo('subview-register-athlete');
+    }, 600);
+
+  } catch (error) {
+    console.error('Erro ao salvar perfil:', error);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined">save</span><span>Salvar e Concluir Cadastro</span>';
+    }
+    showToast('Erro ao salvar dados. Verifique a conexão.', 'error');
+  }
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, function (m) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-  });
+function markStep1Completed(userData) {
+  // Atualiza badge no menu
+  const b1 = document.getElementById('badge-step1-status');
+  if (b1) {
+    b1.textContent = 'Concluído';
+    b1.className = 'nav-status-badge success';
+  }
+
+  // Atualiza banner de topo
+  const banner = document.getElementById('profile-status-banner');
+  if (banner) {
+    banner.className = 'notice-banner success';
+    banner.innerHTML = `
+      <div class="notice-icon"><span class="material-symbols-outlined">verified</span></div>
+      <div class="notice-content">
+        <h3>Cadastro de Usuário Completo!</h3>
+        <p>Seus dados básicos foram salvos com sucesso na aba USERS. A Etapa 2 (Cadastro de Atleta) está liberada!</p>
+      </div>
+    `;
+  }
+
+  // Atualiza badge de bloqueio da etapa 2
+  const b2 = document.getElementById('badge-step2-status');
+  if (b2) {
+    b2.textContent = 'Liberado';
+    b2.className = 'nav-status-badge warn';
+  }
+
+  // Atualiza avatar do operador na sidebar
+  if (userData.Nome) {
+    document.getElementById('dash-user-name').textContent = userData.Nome;
+    const imgEl = document.getElementById('dash-user-avatar-img');
+    const textEl = document.getElementById('dash-user-avatar-text');
+    if (userData.Imagem && imgEl) {
+      imgEl.src = userData.Imagem;
+      imgEl.style.display = 'block';
+      if (textEl) textEl.style.display = 'none';
+    }
+  }
 }
 
 /* =============================================================
-   4. UTILITÁRIOS, SESSÃO E LOGIN
+   3. ETAPA 2: CADASTRO DE ATLETA (ABA "ATLETAS")
+============================================================= */
+
+function checkAthleteUnlockStatus() {
+  const session = getStoredSession();
+  const isCompleted = session && session.profileCompleted;
+
+  const lockCard = document.getElementById('athlete-lock-card');
+  const formContainer = document.getElementById('athlete-form-container');
+
+  if (!isCompleted) {
+    if (lockCard) lockCard.classList.remove('hidden');
+    if (formContainer) formContainer.classList.add('hidden');
+  } else {
+    if (lockCard) lockCard.classList.add('hidden');
+    if (formContainer) formContainer.classList.remove('hidden');
+    
+    // Se houver dados do usuário, pré-preenche
+    if (session.userData) {
+      populateAthleteFromUser(session.userData);
+    }
+  }
+}
+
+function populateAthleteFromUser(u) {
+  const nameInput = document.getElementById('ath-name-input');
+  const dobInput = document.getElementById('ath-dob-input');
+  const phoneInput = document.getElementById('ath-phone-input');
+
+  if (nameInput && !nameInput.value) nameInput.value = u.Nome || '';
+  if (dobInput && !dobInput.value) {
+    dobInput.value = u.data_de_Nascimento || '';
+    handleAthleteDobChange(u.data_de_Nascimento);
+  }
+  if (phoneInput && !phoneInput.value) phoneInput.value = u.Telefone || '';
+
+  syncAthletePreview();
+}
+
+function handleAthletePhotoSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const base64 = e.target.result;
+    document.getElementById('athlete-image-base64').value = base64;
+    
+    // Atualiza preview no form e no trading card
+    updateAthleteCardPhoto(base64);
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleAthleteUrlInput(url) {
+  updateAthleteCardPhoto(url);
+}
+
+function copyPhotoFromUser() {
+  const userPhoto = value('user-image-base64') || value('user-image-url');
+  if (!userPhoto) {
+    showToast('Você ainda não escolheu uma foto de perfil na Etapa 1.', 'error');
+    return;
+  }
+  updateAthleteCardPhoto(userPhoto);
+  document.getElementById('athlete-image-url').value = userPhoto.startsWith('http') ? userPhoto : '';
+  document.getElementById('athlete-image-base64').value = userPhoto;
+  showToast('Foto copiada do perfil de usuário!', 'success');
+}
+
+function updateAthleteCardPhoto(photoSrc) {
+  const previewImg = document.getElementById('athlete-image-preview');
+  const fallback = document.getElementById('athlete-image-fallback');
+  const cardImg = document.getElementById('card-preview-img');
+  const cardFallback = document.getElementById('card-preview-fallback');
+
+  if (photoSrc) {
+    if (previewImg) { previewImg.src = photoSrc; previewImg.classList.remove('hidden'); }
+    if (fallback) fallback.classList.add('hidden');
+    if (cardImg) { cardImg.src = photoSrc; cardImg.classList.remove('hidden'); }
+    if (cardFallback) cardFallback.classList.add('hidden');
+  } else {
+    if (previewImg) previewImg.classList.add('hidden');
+    if (fallback) fallback.classList.remove('hidden');
+    if (cardImg) cardImg.classList.add('hidden');
+    if (cardFallback) cardFallback.classList.remove('hidden');
+  }
+}
+
+function handleAthleteDobChange(dobString) {
+  const age = calcUserAge(dobString);
+  const ageDisplay = document.getElementById('ath-age-display');
+  if (ageDisplay) ageDisplay.value = age ? `${age} anos` : '';
+
+  const cardAge = document.getElementById('card-preview-age');
+  if (cardAge) cardAge.textContent = age ? `${age}a` : '--';
+}
+
+function syncAthletePreview() {
+  const name = value('ath-name-input') || 'Nome do Atleta';
+  const pos = document.getElementById('ath-position-input')?.value || 'Armador (PG)';
+  const height = value('ath-height-input') || '--';
+  const weight = value('ath-weight-input') || '--';
+
+  const cardName = document.getElementById('card-preview-name');
+  const cardPos = document.getElementById('card-preview-pos');
+  const cardH = document.getElementById('card-preview-height');
+  const cardW = document.getElementById('card-preview-weight');
+
+  if (cardName) cardName.textContent = name;
+  if (cardPos) cardPos.textContent = pos;
+  if (cardH) cardH.textContent = height;
+  if (cardW) cardW.textContent = weight;
+}
+
+function formatBirthdayColumn(dobString) {
+  if (!dobString) return '';
+  const parts = dobString.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}`; // DD/MM
+  }
+  return '';
+}
+
+async function saveAthleteProfile() {
+  const session = getStoredSession() || {};
+  const userId = session.unique_id;
+
+  if (!userId) {
+    showToast('Usuário não identificado. Complete a Etapa 1 primeiro.', 'error');
+    navigateTo('subview-complete-profile');
+    return;
+  }
+
+  const nome = value('ath-name-input');
+  const pos = document.getElementById('ath-position-input')?.value || 'Armador';
+  const altura = value('ath-height-input');
+  const peso = value('ath-weight-input');
+  const genero = document.getElementById('ath-gender-input')?.value || 'Masculino';
+  const dob = value('ath-dob-input');
+  const telefone = value('ath-phone-input');
+  const urlImagem = value('athlete-image-url');
+  const imagemBase64 = value('athlete-image-base64');
+  const idade = calcUserAge(dob);
+  const aniversario = formatBirthdayColumn(dob);
+
+  if (!nome) {
+    showToast('Informe o nome do atleta.', 'error');
+    return;
+  }
+
+  const athleteData = {
+    unique_id: 'ATH_' + Date.now(),
+    user_id: userId,
+    nome: nome,
+    data_de_nascimento: dob,
+    telefone: telefone,
+    'posição de jogo': pos,
+    altura: altura,
+    peso: peso,
+    genero: genero,
+    url_image: urlImagem,
+    Imagem: imagemBase64 || urlImagem,
+    coluna_aniversario: aniversario,
+    idade: idade
+  };
+
+  const btn = document.getElementById('btn-save-athlete');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Salvando atleta na plataforma...</span>';
+  }
+
+  try {
+    // Se houver sessão real conectada, envia para a API na aba ATLETAS
+    if (session.security_id) {
+      const response = await apiCreateAthlete(athleteData, session.security_id);
+      if (!response.success) {
+        showToast(response.message || 'Erro ao registrar atleta.', 'error');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined">sports_basketball</span><span>Salvar Cadastro de Atleta</span>';
+        }
+        return;
+      }
+    }
+
+    // Salva localmente
+    const updatedSession = {
+      ...session,
+      athleteRegistered: true,
+      athleteData: athleteData
+    };
+    saveSession(updatedSession);
+
+    // Atualiza status na sidebar
+    const b2 = document.getElementById('badge-step2-status');
+    if (b2) {
+      b2.textContent = 'Ativo';
+      b2.className = 'nav-status-badge success';
+    }
+
+    showToast('Parabéns! Você agora é um Atleta Ativo na Quadra! 🏀', 'success');
+
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined">verified</span><span>Atleta Ativo!</span>';
+    }
+
+  } catch (error) {
+    console.error('Erro ao salvar atleta:', error);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined">sports_basketball</span><span>Salvar Cadastro de Atleta</span>';
+    }
+    showToast('Erro de conexão ao salvar atleta.', 'error');
+  }
+}
+
+/* =============================================================
+   4. UTILITÁRIOS, LOGIN E SESSÃO
 ============================================================= */
 
 function value(id) {
@@ -289,7 +560,7 @@ async function login() {
     const response = await apiLogin(email, senha);
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<span>Entrar na Quadra</span><span class="material-symbols-outlined">bolt</span>';
+      btn.innerHTML = '<span>Entrar na Plataforma</span><span class="material-symbols-outlined">arrow_forward</span>';
     }
 
     if (!response.success) {
@@ -299,15 +570,66 @@ async function login() {
 
     saveSession({ email, ...response });
     updateOperatorHeader(email);
-    showToast('Login efetuado com sucesso!', 'success');
+    showToast('Login realizado com sucesso!', 'success');
+    
     switchMainGroup('group-dashboard');
+    navigateTo('subview-complete-profile');
 
   } catch (error) {
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<span>Entrar na Quadra</span><span class="material-symbols-outlined">bolt</span>';
+      btn.innerHTML = '<span>Entrar na Plataforma</span><span class="material-symbols-outlined">arrow_forward</span>';
     }
     showToast('Erro ao conectar ao servidor.', 'error');
+  }
+}
+
+async function registerUser() {
+  const email = value('signup-email');
+  const senha = value('signup-password');
+  const confirmacao = value('signup-password-confirm');
+
+  if (!email || !senha || !confirmacao) {
+    showToast('Preencha todos os campos.', 'error');
+    return;
+  }
+  if (senha.length < 6) {
+    showToast('A senha deve ter pelo menos 6 caracteres.', 'error');
+    return;
+  }
+  if (senha !== confirmacao) {
+    showToast('As senhas não coincidem.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('signup-button');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Criando conta...</span>';
+  }
+
+  try {
+    const response = await apiRegister(email, senha);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Criar Conta</span><span class="material-symbols-outlined">sports_basketball</span>';
+    }
+
+    if (!response.success) {
+      showToast(response.message || 'Não foi possível criar a conta.', 'error');
+      return;
+    }
+
+    showToast('Conta criada com sucesso! Faça seu login para completar o cadastro.', 'success');
+    document.getElementById('login-email').value = email;
+    showAuthScreen('login');
+
+  } catch (error) {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Criar Conta</span><span class="material-symbols-outlined">sports_basketball</span>';
+    }
+    showToast('Erro ao criar conta.', 'error');
   }
 }
 
@@ -319,20 +641,25 @@ function logout() {
 }
 
 function enterDirectDashboard() {
-  updateOperatorHeader('mesa.torneio@naquadra.com');
+  const demoEmail = 'atleta.demo@naquadra.com';
+  saveSession({ email: demoEmail, unique_id: 'DEMO_ATLETA_01', profileCompleted: false });
+  updateOperatorHeader(demoEmail);
   switchMainGroup('group-dashboard');
-  navigateTo('subview-matches');
-  showToast('Mesa de operação do torneio aberta! 🏀', 'success');
+  navigateTo('subview-complete-profile');
+  showToast('Acesso de demonstração ativado! Complete seu cadastro.', 'success');
 }
 
 function updateOperatorHeader(email) {
   const nameEl = document.getElementById('dash-user-name');
-  const avatarEl = document.getElementById('dash-user-avatar');
+  const emailEl = document.getElementById('dash-user-email');
+  const avatarText = document.getElementById('dash-user-avatar-text');
+  
   if (email) {
     const name = email.split('@')[0];
     const cleanName = name.charAt(0).toUpperCase() + name.slice(1);
     if (nameEl) nameEl.textContent = cleanName;
-    if (avatarEl) avatarEl.textContent = cleanName.slice(0, 2).toUpperCase();
+    if (emailEl) emailEl.textContent = email;
+    if (avatarText) avatarText.textContent = cleanName.slice(0, 2).toUpperCase();
   }
 }
 
@@ -354,30 +681,17 @@ document.addEventListener('DOMContentLoaded', function () {
   updateClock();
   setInterval(updateClock, 30000);
 
-  // Verifica URL com reset de senha
-  const urlParams = new URLSearchParams(window.location.search);
-  const resetId = urlParams.get('reset_id') || urlParams.get('resetId');
-  if (resetId) {
-    switchMainGroup('group-auth');
-    showAuthScreen('reset');
-    const stepEmail = document.getElementById('reset-step-email');
-    const stepPass = document.getElementById('reset-step-password');
-    const codeInput = document.getElementById('reset-code');
-    if (stepEmail) stepEmail.classList.add('hidden');
-    if (stepPass) stepPass.classList.remove('hidden');
-    if (codeInput) codeInput.value = resetId;
-    return;
-  }
-
-  // Verifica se há sessão gravada
   const session = getStoredSession();
   if (session && session.email) {
     updateOperatorHeader(session.email);
+    if (session.userData) {
+      markStep1Completed(session.userData);
+    }
     switchMainGroup('group-dashboard');
-    navigateTo('subview-matches');
+    navigateTo('subview-complete-profile');
   } else {
-    // Por padrão na mesa do torneio, entra direto no Dashboard pronto para operação
-    switchMainGroup('group-dashboard');
-    navigateTo('subview-matches');
+    // Por padrão abre no grupo de autenticação / login
+    switchMainGroup('group-auth');
+    showAuthScreen('login');
   }
 });

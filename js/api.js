@@ -143,3 +143,39 @@ async function apiLogout(securityId) {
     security_id: securityId
   });
 }
+
+/**
+ * Atualiza o cadastro do usuário na aba USERS (Etapa 1).
+ */
+async function apiUpdateUser(uniqueId, userData, securityId) {
+  return await callBackend('update', {
+    aba: 'USERS',
+    unique_id: uniqueId,
+    security_id: securityId,
+    ...userData
+  });
+}
+
+/**
+ * Cria o registro de atleta na aba ATLETAS (Etapa 2).
+ */
+async function apiCreateAthlete(athleteData, securityId) {
+  return await callBackend('create', {
+    aba: 'ATLETAS',
+    security_id: securityId,
+    ...athleteData
+  });
+}
+
+/**
+ * Busca dados de uma aba por campo e valor.
+ */
+async function apiBuscar(aba, coluna, valor, securityId) {
+  return await callBackend('busca', {
+    aba: aba,
+    coluna: coluna,
+    valor: valor,
+    security_id: securityId
+  });
+}
+

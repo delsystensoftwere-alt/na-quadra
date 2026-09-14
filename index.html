@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Na Quadra - Gestão de Torneios & Jogos</title>
-  <meta name="description" content="Sistema de gestão de partidas de basquete, torneios, ligas e peladas para mesa de organização e atletas.">
+  <title>Na Quadra - Plataforma de Basquete</title>
+  <meta name="description" content="Plataforma de basquete: complete seu cadastro e torne-se um atleta ativo para rachões e equipes.">
 
   <!-- Google Fonts & Ícones -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,12 +17,11 @@
 <body>
 
   <!-- =============================================================
-       GRUPO 1: AUTENTICAÇÃO (LOGIN, CADASTRO, RESET)
+       GRUPO 1: AUTENTICAÇÃO (LOGIN / CADASTRO INICIAL)
   ============================================================= -->
   <div class="view-group" id="group-auth">
     <div class="auth-container">
       
-      <!-- Hero de Autenticação -->
       <div class="auth-hero">
         <svg class="hero-court-lines" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
           <circle cx="330" cy="30" r="46" stroke="#ff6b35" stroke-width="2" fill="none" opacity=".35"></circle>
@@ -34,8 +33,8 @@
             <span class="dot"></span>
             <span>Na Quadra</span>
           </div>
-          <h1 id="auth-title">Acesso ao Sistema</h1>
-          <p id="auth-subtitle">Mesa de organização e atletas</p>
+          <h1 id="auth-title">Acesse sua Conta</h1>
+          <p id="auth-subtitle">Entre para gerenciar seu perfil e partidas</p>
         </div>
       </div>
 
@@ -46,7 +45,7 @@
             <label class="field-label" for="login-email"><span>E-mail</span><span class="hint">Obrigatório</span></label>
             <div class="field">
               <span class="material-symbols-outlined icon-left">mail</span>
-              <input id="login-email" type="email" placeholder="operador@naquadra.com" autocomplete="username">
+              <input id="login-email" type="email" placeholder="seu.email@exemplo.com" autocomplete="username">
             </div>
           </div>
 
@@ -71,24 +70,24 @@
           </div>
 
           <button class="btn btn-primary" id="login-button" onclick="login()">
-            <span>Entrar na Quadra</span>
-            <span class="material-symbols-outlined">bolt</span>
+            <span>Entrar na Plataforma</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
 
         <p class="auth-footer">
-          Novo organizador ou atleta?
-          <button class="link-inline" type="button" onclick="showAuthScreen('signup')">Cadastre-se</button>
+          Ainda não tem cadastro?
+          <button class="link-inline" type="button" onclick="showAuthScreen('signup')">Criar conta rápida</button>
         </p>
 
         <div style="text-align: center; margin-top: 10px;">
           <button class="link-inline" type="button" style="color: var(--secondary); font-size: 12px;" onclick="enterDirectDashboard()">
-            🏀 Abrir Mesa do Torneio (Modo Rápido / Demo)
+            🏀 Entrar Direto (Modo Demonstração)
           </button>
         </div>
       </section>
 
-      <!-- Subtela: Cadastro -->
+      <!-- Subtela: Cadastro Inicial (E-mail e Senha) -->
       <section class="auth-screen" id="auth-signup">
         <div class="auth-card">
           <div class="field-group">
@@ -128,7 +127,7 @@
         </div>
 
         <p class="auth-footer">
-          Já tem conta?
+          Já possui conta?
           <button class="link-inline" type="button" onclick="showAuthScreen('login')">Fazer login</button>
         </p>
       </section>
@@ -140,7 +139,7 @@
             <label class="field-label" for="reset-email"><span>E-mail de cadastro</span></label>
             <div class="field">
               <span class="material-symbols-outlined icon-left">mail</span>
-              <input id="reset-email" type="email" placeholder="atleta@exemplo.com">
+              <input id="reset-email" type="email" placeholder="seu.email@exemplo.com">
             </div>
           </div>
           <button class="btn btn-primary" id="reset-request-button" onclick="requestReset()">
@@ -178,430 +177,465 @@
   </div>
 
   <!-- =============================================================
-       GRUPO 2: DASHBOARD WIDESCREEN PARA PC/NOTEBOOK (MESA DE TORNEIO)
+       GRUPO 2: DASHBOARD WIDESCREEN (MENU LIMPO & TELAS FOCADAS)
   ============================================================= -->
   <div class="view-group active" id="group-dashboard">
 
-    <!-- Sidebar Lateral de Navegação (Menu Modular) -->
+    <!-- Sidebar Lateral de Navegação (Menu Focado) -->
     <aside class="sidebar" id="app-sidebar">
       <div class="sidebar-header">
         <div class="brand-icon">
           <span class="material-symbols-outlined">sports_basketball</span>
         </div>
         <span class="brand-name">Na Quadra</span>
-        <span class="brand-badge">MESA</span>
+        <span class="brand-badge">PORTAL</span>
       </div>
 
-      <!-- Menu Principal: Onde alternamos os subgrupos de visibilidade -->
+      <!-- Menu Principal: Telas Solicitadas -->
       <nav class="sidebar-nav">
-        <div class="nav-section-title">Gerenciamento</div>
+        <div class="nav-section-title">Menu Principal</div>
         
-        <button class="sidebar-btn active" id="btn-nav-matches" type="button" onclick="navigateTo('subview-matches', this)">
-          <span class="material-symbols-outlined">scoreboard</span>
-          <span>Mesa de Partidas</span>
+        <!-- Tela 1: Complete seu cadastro -->
+        <button class="sidebar-btn active" id="btn-nav-complete-profile" type="button" onclick="navigateTo('subview-complete-profile', this)">
+          <span class="material-symbols-outlined">person_pin</span>
+          <span>1. Complete seu Cadastro</span>
+          <span id="badge-step1-status" class="nav-status-badge warn">Pendente</span>
         </button>
 
-        <button class="sidebar-btn" id="btn-nav-athletes" type="button" onclick="navigateTo('subview-athletes', this)">
-          <span class="material-symbols-outlined">person_add</span>
-          <span>Atletas / Cadastro</span>
-        </button>
-
-        <button class="sidebar-btn" id="btn-nav-teams" type="button" onclick="navigateTo('subview-teams', this)">
-          <span class="material-symbols-outlined">shield</span>
-          <span>Equipes & Times</span>
-        </button>
-
-        <button class="sidebar-btn" id="btn-nav-courts" type="button" onclick="navigateTo('subview-courts', this)">
-          <span class="material-symbols-outlined">stadium</span>
-          <span>Quadras</span>
-        </button>
-
-        <div class="nav-section-title">Configurações</div>
-
-        <button class="sidebar-btn" id="btn-nav-settings" type="button" onclick="navigateTo('subview-settings', this)">
-          <span class="material-symbols-outlined">tune</span>
-          <span>Regras do Torneio</span>
+        <!-- Tela 2: Cadastro de atleta -->
+        <button class="sidebar-btn" id="btn-nav-register-athlete" type="button" onclick="navigateTo('subview-register-athlete', this)">
+          <span class="material-symbols-outlined">sports_basketball</span>
+          <span>2. Cadastro de Atleta</span>
+          <span id="badge-step2-status" class="nav-status-badge lock">Bloqueado</span>
         </button>
       </nav>
 
-      <!-- Rodapé da Sidebar: Usuário / Sair -->
+      <!-- Rodapé da Sidebar: Perfil do Usuário e Logout -->
       <div class="sidebar-footer">
         <div class="user-snippet">
-          <div class="user-avatar" id="dash-user-avatar">NQ</div>
+          <div class="user-avatar" id="dash-user-avatar">
+            <img id="dash-user-avatar-img" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
+            <span id="dash-user-avatar-text">NQ</span>
+          </div>
           <div class="user-meta">
-            <span class="user-name" id="dash-user-name">Mesa Central</span>
-            <span class="user-role">Operador</span>
+            <span class="user-name" id="dash-user-name">Usuário</span>
+            <span class="user-role" id="dash-user-email">usuario@exemplo.com</span>
           </div>
         </div>
-        <button class="icon-btn" type="button" title="Sair do sistema" onclick="logout()" style="width: 32px; height: 32px; border:0; background:transparent; color: var(--secondary); cursor:pointer;">
+        <button class="icon-btn" type="button" title="Sair da conta" onclick="logout()" style="width: 32px; height: 32px; border:0; background:transparent; color: var(--secondary); cursor:pointer;">
           <span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
         </button>
       </div>
     </aside>
 
-    <!-- Área de Conteúdo Principal (Main Content) -->
+    <!-- Área de Conteúdo Principal Widescreen -->
     <main class="main-wrapper">
       
-      <!-- Topbar Superior da Mesa -->
+      <!-- Topbar Superior -->
       <header class="topbar">
         <div class="topbar-left">
           <button class="menu-toggle-btn" type="button" onclick="toggleSidebar()" aria-label="Abrir Menu">
             <span class="material-symbols-outlined">menu</span>
           </button>
           <div class="topbar-title-wrap">
-            <h1 id="page-title">Mesa de Partidas</h1>
+            <h1 id="page-title">Complete seu Cadastro</h1>
           </div>
         </div>
 
         <div class="topbar-right">
           <div class="table-clock-badge">
             <span class="pulse"></span>
-            <span id="current-clock">19:30</span>
-            <span>• Torneio Ativo</span>
+            <span id="current-clock">--:--</span>
+            <span>• Conectado</span>
           </div>
         </div>
       </header>
 
-      <!-- Container dos Subgrupos (Apenas 1 fica com .active por vez) -->
+      <!-- Conteúdo Dinâmico (Apenas 1 subgrupo visível por vez) -->
       <div class="dashboard-content">
 
-        <!-- ==========================================
-             SUBGRUPO 1: MESA DE PARTIDAS (DEFAULT)
-        =========================================== -->
-        <div class="subview-group active" id="subview-matches">
-          <div class="mesa-grid">
-            
-            <!-- Placar ao Vivo Quadra 1 -->
-            <div class="scoreboard-card">
-              <div class="scoreboard-header">
-                <div class="badge-live">
-                  <span class="pulse" style="background:#ef4444; width:6px; height:6px; border-radius:50%;"></span>
-                  <span>Quadra 1 • Ao Vivo</span>
-                </div>
-                <div class="match-period">2º Quarto • 3x3</div>
-              </div>
-
-              <div class="scoreboard-teams">
-                <!-- Time Casa -->
-                <div class="team-box">
-                  <div class="team-badge-circle" style="background: rgba(255, 107, 53, 0.2); color: var(--primary);">
-                    T1
-                  </div>
-                  <h2 class="team-name" id="team1-name">Lakers da Zona Leste</h2>
-                  <div class="team-score" id="team1-score">18</div>
-                </div>
-
-                <!-- Cronômetro Central -->
-                <div class="scoreboard-divider">
-                  <div class="game-timer" id="match-timer">04:32</div>
-                  <div style="display: flex; gap: 6px; margin-top: 6px;">
-                    <button class="btn-point" style="padding: 4px 10px; font-size: 11px;" onclick="toggleTimer()">Pausar / Iniciar</button>
-                  </div>
-                </div>
-
-                <!-- Time Visitante -->
-                <div class="team-box">
-                  <div class="team-badge-circle" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
-                    T2
-                  </div>
-                  <h2 class="team-name" id="team2-name">Mooca Streetball</h2>
-                  <div class="team-score" id="team2-score">15</div>
-                </div>
-              </div>
-
-              <!-- Controles Rápidos da Mesa de Operação -->
-              <div class="scoreboard-actions">
-                <div class="team-controls">
-                  <button class="btn-point" onclick="addPoints(1, 1)">+1</button>
-                  <button class="btn-point" onclick="addPoints(1, 2)">+2</button>
-                  <button class="btn-point" onclick="addPoints(1, 3)">+3</button>
-                  <button class="btn-point" style="color: var(--secondary);" onclick="addPoints(1, -1)">-1</button>
-                </div>
-
-                <div class="team-controls">
-                  <button class="btn-point" onclick="addPoints(2, 1)">+1</button>
-                  <button class="btn-point" onclick="addPoints(2, 2)">+2</button>
-                  <button class="btn-point" onclick="addPoints(2, 3)">+3</button>
-                  <button class="btn-point" style="color: var(--secondary);" onclick="addPoints(2, -1)">-1</button>
-                </div>
-              </div>
+        <!-- =============================================================
+             TELA 1: COMPLETE SEU CADASTRO (ABA "USERS")
+        ============================================================= -->
+        <div class="subview-group active" id="subview-complete-profile">
+          
+          <!-- Banner Informativo pós-login -->
+          <div class="notice-banner" id="profile-status-banner">
+            <div class="notice-icon">
+              <span class="material-symbols-outlined">priority_high</span>
             </div>
-
-            <!-- Fila de Próximos Jogos -->
-            <div class="next-matches-card">
-              <h3 class="card-title">
-                <span>Próximas Partidas na Fila</span>
-                <span style="font-size: 12px; color: var(--primary); cursor: pointer;" onclick="showToast('Partida finalizada! Avançando a fila...')">Avançar Fila</span>
-              </h3>
-
-              <div class="queue-list">
-                <div class="queue-item">
-                  <div>
-                    <div class="queue-teams">Celtics da Vila vs Cestinhas SP</div>
-                    <div class="queue-time">Quadra 1 • Previsão: 20:00</div>
-                  </div>
-                  <span class="number-chip" style="width: auto; padding: 2px 8px;">Jogo 04</span>
-                </div>
-
-                <div class="queue-item">
-                  <div>
-                    <div class="queue-teams">Bulls do Morumbi vs Ibirapuera Hoops</div>
-                    <div class="queue-time">Quadra 2 • Previsão: 20:15</div>
-                  </div>
-                  <span class="number-chip" style="width: auto; padding: 2px 8px;">Jogo 05</span>
-                </div>
-
-                <div class="queue-item">
-                  <div>
-                    <div class="queue-teams">Rachão das 21h (Equipe A vs Equipe B)</div>
-                    <div class="queue-time">Quadra 1 • Previsão: 20:45</div>
-                  </div>
-                  <span class="number-chip" style="width: auto; padding: 2px 8px;">Jogo 06</span>
-                </div>
-              </div>
+            <div class="notice-content">
+              <h3>Complete seu cadastro para continuar</h3>
+              <p>Para se oferecer como atleta ativo, participar de rachões ou cadastrar equipes, precisamos que você preencha seus dados básicos abaixo.</p>
             </div>
-
           </div>
-        </div>
 
-        <!-- ==========================================
-             SUBGRUPO 2: CADASTRO E LISTA DE ATLETAS
-        =========================================== -->
-        <div class="subview-group" id="subview-athletes">
-          <div class="athletes-layout">
-            
-            <!-- Painel Esquerdo: Formulário Rápido de Cadastro -->
-            <div class="form-panel">
-              <h3 class="card-title">Novo Atleta</h3>
+          <!-- Formulário da aba USERS -->
+          <div class="card-widescreen">
+            <div class="card-header-clean">
+              <div class="card-title-group">
+                <span class="section-number">ETAPA 1</span>
+                <h2>Informações de Usuário (Aba USERS)</h2>
+              </div>
+              <span class="badge-tag">Obrigatório</span>
+            </div>
 
-              <div class="field-group">
-                <label class="field-label" for="ath-name">Nome Completo</label>
-                <div class="field">
-                  <input id="ath-name" type="text" placeholder="Ex: Lucas Ferreira">
+            <!-- Seção de Foto / Imagem do Usuário (IMAGE_USERS_FOLDER_ID) -->
+            <div class="profile-photo-row">
+              <div class="avatar-preview-box">
+                <img id="user-image-preview" src="" alt="Foto de perfil" class="avatar-preview-img hidden">
+                <div id="user-image-fallback" class="avatar-preview-fallback">
+                  <span class="material-symbols-outlined">add_a_photo</span>
                 </div>
               </div>
 
+              <div class="avatar-upload-info">
+                <label class="field-label">Foto de Perfil</label>
+                <div class="photo-inputs-row">
+                  <label class="btn-file-upload">
+                    <span class="material-symbols-outlined">upload</span>
+                    <span>Escolher Imagem</span>
+                    <input type="file" id="user-image-file" accept="image/*" onchange="handleUserPhotoSelect(event)">
+                  </label>
+                  <span class="or-separator">ou informe o link direto:</span>
+                </div>
+                <div class="field" style="margin-top: 6px; max-width: 480px;">
+                  <span class="material-symbols-outlined icon-left">link</span>
+                  <input type="url" id="user-image-url" placeholder="https://exemplo.com/minha-foto.jpg" oninput="handleUserUrlInput(this.value)">
+                </div>
+                <input type="hidden" id="user-image-base64">
+              </div>
+            </div>
+
+            <hr class="card-divider">
+
+            <!-- Grid de Campos da aba USERS -->
+            <div class="form-grid-2cols">
+              
+              <!-- Nome -->
               <div class="field-group">
-                <label class="field-label" for="ath-nickname">Apelido / Como é chamado em quadra</label>
+                <label class="field-label" for="user-name">Nome Completo <span class="hint">Obrigatório</span></label>
                 <div class="field">
-                  <input id="ath-nickname" type="text" placeholder="Ex: Lucão">
+                  <span class="material-symbols-outlined icon-left">badge</span>
+                  <input type="text" id="user-name" placeholder="Ex: Rodrigo Silva">
                 </div>
               </div>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div class="field-group">
-                  <label class="field-label" for="ath-number">Número Camisa</label>
-                  <div class="field">
-                    <input id="ath-number" type="number" placeholder="23" min="0" max="99">
-                  </div>
-                </div>
-
-                <div class="field-group">
-                  <label class="field-label" for="ath-position">Posição</label>
-                  <div class="field">
-                    <select id="ath-position">
-                      <option value="Armador">Armador (PG)</option>
-                      <option value="Ala-Armador">Ala-Armador (SG)</option>
-                      <option value="Ala">Ala (SF)</option>
-                      <option value="Ala-Pivô">Ala-Pivô (PF)</option>
-                      <option value="Pivô">Pivô (C)</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
+              <!-- Tipo de Conta -->
               <div class="field-group">
-                <label class="field-label" for="ath-team">Equipe / Time</label>
+                <label class="field-label" for="user-conta">Tipo de Conta</label>
                 <div class="field">
-                  <select id="ath-team">
-                    <option value="Lakers da Zona Leste">Lakers da Zona Leste</option>
-                    <option value="Mooca Streetball">Mooca Streetball</option>
-                    <option value="Celtics da Vila">Celtics da Vila</option>
-                    <option value="Sem Equipe">Avulso / Rachão Aberto</option>
+                  <span class="material-symbols-outlined icon-left">manage_accounts</span>
+                  <select id="user-conta">
+                    <option value="Atleta">Atleta</option>
+                    <option value="Organizador">Organizador de Torneio / Mesário</option>
+                    <option value="Técnico">Técnico / Treinador</option>
+                    <option value="Torcedor">Torcedor / Apoiador</option>
                   </select>
                 </div>
               </div>
 
-              <button class="btn btn-primary" type="button" onclick="saveAthlete()">
-                <span class="material-symbols-outlined">person_add</span>
-                <span>Cadastrar Atleta</span>
+              <!-- Data de Nascimento -->
+              <div class="field-group">
+                <label class="field-label" for="user-dob">Data de Nascimento</label>
+                <div class="field">
+                  <span class="material-symbols-outlined icon-left">calendar_month</span>
+                  <input type="date" id="user-dob" onchange="calcUserAge(this.value)">
+                </div>
+              </div>
+
+              <!-- Telefone -->
+              <div class="field-group">
+                <label class="field-label" for="user-phone">Telefone (WhatsApp)</label>
+                <div class="field">
+                  <span class="material-symbols-outlined icon-left">call</span>
+                  <input type="tel" id="user-phone" placeholder="(11) 98765-4321">
+                </div>
+              </div>
+
+              <!-- Endereço -->
+              <div class="field-group grid-span-2">
+                <label class="field-label" for="user-address">Endereço (Rua / Logradouro)</label>
+                <div class="field">
+                  <span class="material-symbols-outlined icon-left">home</span>
+                  <input type="text" id="user-address" placeholder="Ex: Av. Paulista">
+                </div>
+              </div>
+
+              <!-- Número -->
+              <div class="field-group">
+                <label class="field-label" for="user-number">Número</label>
+                <div class="field">
+                  <span class="material-symbols-outlined icon-left">tag</span>
+                  <input type="text" id="user-number" placeholder="Ex: 1578">
+                </div>
+              </div>
+
+              <!-- Bairro -->
+              <div class="field-group">
+                <label class="field-label" for="user-bairro">Bairro</label>
+                <div class="field">
+                  <span class="material-symbols-outlined icon-left">apartment</span>
+                  <input type="text" id="user-bairro" placeholder="Ex: Bela Vista">
+                </div>
+              </div>
+
+              <!-- Cidade -->
+              <div class="field-group">
+                <label class="field-label" for="user-city">Cidade</label>
+                <div class="field">
+                  <span class="material-symbols-outlined icon-left">location_city</span>
+                  <input type="text" id="user-city" placeholder="Ex: São Paulo">
+                </div>
+              </div>
+
+              <!-- UF -->
+              <div class="field-group">
+                <label class="field-label" for="user-uf">UF (Estado)</label>
+                <div class="field">
+                  <span class="material-symbols-outlined icon-left">map</span>
+                  <select id="user-uf">
+                    <option value="SP">São Paulo (SP)</option>
+                    <option value="RJ">Rio de Janeiro (RJ)</option>
+                    <option value="MG">Minas Gerais (MG)</option>
+                    <option value="PR">Paraná (PR)</option>
+                    <option value="RS">Rio Grande do Sul (RS)</option>
+                    <option value="SC">Santa Catarina (SC)</option>
+                    <option value="BA">Bahia (BA)</option>
+                    <option value="PE">Pernambuco (PE)</option>
+                    <option value="CE">Ceará (CE)</option>
+                    <option value="GO">Goiás (GO)</option>
+                    <option value="DF">Distrito Federal (DF)</option>
+                    <option value="OUTRO">Outro Estado</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Ação de Salvar -->
+            <div class="form-actions-row">
+              <button class="btn btn-primary" id="btn-save-user-profile" type="button" onclick="saveUserProfile()" style="max-width: 320px;">
+                <span class="material-symbols-outlined">save</span>
+                <span>Salvar e Concluir Cadastro</span>
               </button>
             </div>
 
-            <!-- Painel Direito: Tabela Limpa de Atletas Inscritos -->
-            <div class="table-panel">
-              <div class="table-toolbar">
-                <h3 class="card-title">Atletas Cadastrados (<span id="athletes-count">4</span>)</h3>
-                
-                <div class="search-field">
-                  <span class="material-symbols-outlined">search</span>
-                  <input type="text" placeholder="Buscar por nome ou número..." oninput="filterAthletes(this.value)">
-                </div>
-              </div>
-
-              <table class="clean-table">
-                <thead>
-                  <tr>
-                    <th>Nº</th>
-                    <th>Atleta</th>
-                    <th>Posição</th>
-                    <th>Equipe</th>
-                    <th>Status</th>
-                    <th>Ação</th>
-                  </tr>
-                </thead>
-                <tbody id="athletes-table-body">
-                  <tr>
-                    <td><span class="number-chip">23</span></td>
-                    <td><strong>Lucas Ferreira</strong> <span style="color:var(--secondary);">(Lucão)</span></td>
-                    <td>Ala-Pivô</td>
-                    <td>Lakers da Zona Leste</td>
-                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
-                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
-                  </tr>
-                  <tr>
-                    <td><span class="number-chip">07</span></td>
-                    <td><strong>Rodrigo Mendes</strong> <span style="color:var(--secondary);">(Diguinho)</span></td>
-                    <td>Armador</td>
-                    <td>Mooca Streetball</td>
-                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
-                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
-                  </tr>
-                  <tr>
-                    <td><span class="number-chip">11</span></td>
-                    <td><strong>Thiago Castro</strong> <span style="color:var(--secondary);">(Pivete)</span></td>
-                    <td>Ala-Armador</td>
-                    <td>Celtics da Vila</td>
-                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
-                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
-                  </tr>
-                  <tr>
-                    <td><span class="number-chip">30</span></td>
-                    <td><strong>Gabriel Santos</strong> <span style="color:var(--secondary);">(Biel)</span></td>
-                    <td>Pivô</td>
-                    <td>Lakers da Zona Leste</td>
-                    <td><span style="color:var(--success); font-weight:700;">● Regular</span></td>
-                    <td><button class="link-inline" style="font-size:12px; color:var(--error);" onclick="removeAthlete(this)">Remover</button></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
           </div>
         </div>
 
-        <!-- ==========================================
-             SUBGRUPO 3: EQUIPES & TIMES
-        =========================================== -->
-        <div class="subview-group" id="subview-teams">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 class="card-title">Equipes Inscritas no Torneio</h3>
-            <button class="btn btn-primary" style="width: auto; padding: 8px 18px;" onclick="showToast('Em breve: Formulário de nova equipe!', 'success')">
-              <span class="material-symbols-outlined">add</span>
-              <span>Nova Equipe</span>
-            </button>
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
-            <div class="auth-card" style="padding: 16px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="team-badge-circle" style="background: rgba(255, 107, 53, 0.2); color: var(--primary);">LZL</div>
-                <div>
-                  <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Lakers da Zona Leste</h4>
-                  <span style="font-size:12px; color:var(--secondary);">6 Atletas inscritos</span>
-                </div>
-              </div>
-              <div style="margin-top: 12px; display:flex; justify-content:space-between; font-size:13px; color:var(--secondary); border-top:1px solid var(--border); padding-top:8px;">
-                <span>Vitórias: <strong>3</strong></span>
-                <span>Saldo: <strong>+18 pts</strong></span>
-              </div>
-            </div>
-
-            <div class="auth-card" style="padding: 16px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="team-badge-circle" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">MSB</div>
-                <div>
-                  <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Mooca Streetball</h4>
-                  <span style="font-size:12px; color:var(--secondary);">5 Atletas inscritos</span>
-                </div>
-              </div>
-              <div style="margin-top: 12px; display:flex; justify-content:space-between; font-size:13px; color:var(--secondary); border-top:1px solid var(--border); padding-top:8px;">
-                <span>Vitórias: <strong>2</strong></span>
-                <span>Saldo: <strong>+8 pts</strong></span>
-              </div>
-            </div>
-
-            <div class="auth-card" style="padding: 16px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="team-badge-circle" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">CDV</div>
-                <div>
-                  <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Celtics da Vila</h4>
-                  <span style="font-size:12px; color:var(--secondary);">5 Atletas inscritos</span>
-                </div>
-              </div>
-              <div style="margin-top: 12px; display:flex; justify-content:space-between; font-size:13px; color:var(--secondary); border-top:1px solid var(--border); padding-top:8px;">
-                <span>Vitórias: <strong>1</strong></span>
-                <span>Saldo: <strong>-4 pts</strong></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ==========================================
-             SUBGRUPO 4: QUADRAS & ESTRUTURA
-        =========================================== -->
-        <div class="subview-group" id="subview-courts">
-          <div class="card-title" style="margin-bottom: 8px;">Monitor de Quadras do Torneio</div>
+        <!-- =============================================================
+             TELA 2: CADASTRO DE ATLETA (ABA "ATLETAS")
+        ============================================================= -->
+        <div class="subview-group" id="subview-register-athlete">
           
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
-            <div class="auth-card">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Quadra 1 (Principal)</h4>
-                <span class="badge-live">Ocupada</span>
-              </div>
-              <p style="font-size:13px; color:var(--secondary); margin:6px 0;">Piso de Madeira • Oficial FIBA</p>
-              <div style="font-size:13px; color:var(--on-surface);">Jogo Atual: Lakers ZL vs Mooca Streetball</div>
+          <!-- Bloqueio caso a Etapa 1 não esteja concluída -->
+          <div id="athlete-lock-card" class="lock-notice-box hidden">
+            <div class="lock-icon-wrap">
+              <span class="material-symbols-outlined">lock</span>
             </div>
-
-            <div class="auth-card">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h4 style="margin:0; font-family:var(--font-display); font-size:16px;">Quadra 2</h4>
-                <span style="background:rgba(16,185,129,0.2); color:var(--success); font-weight:700; font-size:11px; padding:3px 8px; border-radius:var(--radius-full);">Disponível</span>
-              </div>
-              <p style="font-size:13px; color:var(--secondary); margin:6px 0;">Piso Modular • 3x3</p>
-              <div style="font-size:13px; color:var(--secondary);">Livre para aquecimento ou próxima rodada</div>
+            <div class="lock-text">
+              <h3>Cadastro de Atleta Bloqueado</h3>
+              <p>Para se cadastrar como atleta ativo e ficar visível para convites de peladas e equipes, você precisa primeiro concluir a <strong>Etapa 1 (Complete seu Cadastro)</strong>.</p>
+              <button class="btn btn-primary" type="button" onclick="navigateTo('subview-complete-profile')" style="width:auto; margin-top:10px;">
+                <span>Ir para Etapa 1: Complete seu Cadastro</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </button>
             </div>
           </div>
-        </div>
 
-        <!-- ==========================================
-             SUBGRUPO 5: CONFIGURAÇÕES DO TORNEIO
-        =========================================== -->
-        <div class="subview-group" id="subview-settings">
-          <div class="form-panel" style="max-width: 600px;">
-            <h3 class="card-title">Regras Gerais da Mesa</h3>
+          <!-- Conteúdo Liberado (Etapa 1 OK) -->
+          <div id="athlete-form-container">
             
-            <div class="field-group">
-              <label class="field-label">Duração do Quarto / Jogo</label>
-              <div class="field">
-                <select>
-                  <option>10 minutos (Regra 3x3 FIBA)</option>
-                  <option>12 minutos (4 quartos - 5x5)</option>
-                  <option>Corrido até 21 pontos</option>
-                </select>
+            <div class="notice-banner success">
+              <div class="notice-icon">
+                <span class="material-symbols-outlined">verified</span>
+              </div>
+              <div class="notice-content">
+                <h3>Etapa 1 Concluída! Agora cadastre seu perfil de Atleta</h3>
+                <p>É com essas informações na aba <strong>ATLETAS</strong> que você será visto por organizadores de rachão e capitães de times na plataforma.</p>
               </div>
             </div>
 
-            <div class="field-group">
-              <label class="field-label">Limite de Faltas Coletivas</label>
-              <div class="field">
-                <input type="number" value="6" min="1" max="10">
+            <div class="athletes-split-layout">
+              
+              <!-- Formulário da aba ATLETAS -->
+              <div class="card-widescreen">
+                <div class="card-header-clean">
+                  <div class="card-title-group">
+                    <span class="section-number">ETAPA 2</span>
+                    <h2>Ficha de Atleta Ativo (Aba ATLETAS)</h2>
+                  </div>
+                </div>
+
+                <!-- Foto do Atleta (IMAGE_ATLETAS_FOLDER_ID) -->
+                <div class="profile-photo-row">
+                  <div class="avatar-preview-box">
+                    <img id="athlete-image-preview" src="" alt="Foto de atleta" class="avatar-preview-img hidden">
+                    <div id="athlete-image-fallback" class="avatar-preview-fallback">
+                      <span class="material-symbols-outlined">sports_basketball</span>
+                    </div>
+                  </div>
+
+                  <div class="avatar-upload-info">
+                    <label class="field-label">Foto de Jogo / Atleta</label>
+                    <div class="photo-inputs-row">
+                      <label class="btn-file-upload">
+                        <span class="material-symbols-outlined">upload</span>
+                        <span>Escolher Imagem de Atleta</span>
+                        <input type="file" id="athlete-image-file" accept="image/*" onchange="handleAthletePhotoSelect(event)">
+                      </label>
+                      <button class="link-inline" type="button" onclick="copyPhotoFromUser()">Usar mesma foto de perfil</button>
+                    </div>
+                    <div class="field" style="margin-top: 6px; max-width: 480px;">
+                      <span class="material-symbols-outlined icon-left">link</span>
+                      <input type="url" id="athlete-image-url" placeholder="https://exemplo.com/foto-atleta.jpg" oninput="handleAthleteUrlInput(this.value)">
+                    </div>
+                    <input type="hidden" id="athlete-image-base64">
+                  </div>
+                </div>
+
+                <hr class="card-divider">
+
+                <div class="form-grid-2cols">
+                  
+                  <!-- Nome (preenchido) -->
+                  <div class="field-group">
+                    <label class="field-label" for="ath-name-input">Nome do Atleta</label>
+                    <div class="field">
+                      <span class="material-symbols-outlined icon-left">badge</span>
+                      <input type="text" id="ath-name-input" placeholder="Seu nome" oninput="syncAthletePreview()">
+                    </div>
+                  </div>
+
+                  <!-- Posição de Jogo -->
+                  <div class="field-group">
+                    <label class="field-label" for="ath-position-input">Posição de Jogo <span class="hint">Obrigatório</span></label>
+                    <div class="field">
+                      <span class="material-symbols-outlined icon-left">sports_basketball</span>
+                      <select id="ath-position-input" onchange="syncAthletePreview()">
+                        <option value="Armador (PG)">Armador (PG)</option>
+                        <option value="Ala-Armador (SG)">Ala-Armador (SG)</option>
+                        <option value="Ala (SF)">Ala (SF)</option>
+                        <option value="Ala-Pivô (PF)">Ala-Pivô (PF)</option>
+                        <option value="Pivô (C)">Pivô (C)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Altura -->
+                  <div class="field-group">
+                    <label class="field-label" for="ath-height-input">Altura (ex: 1.88 m)</label>
+                    <div class="field">
+                      <span class="material-symbols-outlined icon-left">height</span>
+                      <input type="text" id="ath-height-input" placeholder="1.85 m" oninput="syncAthletePreview()">
+                    </div>
+                  </div>
+
+                  <!-- Peso -->
+                  <div class="field-group">
+                    <label class="field-label" for="ath-weight-input">Peso (ex: 82 kg)</label>
+                    <div class="field">
+                      <span class="material-symbols-outlined icon-left">fitness_center</span>
+                      <input type="text" id="ath-weight-input" placeholder="82 kg" oninput="syncAthletePreview()">
+                    </div>
+                  </div>
+
+                  <!-- Gênero -->
+                  <div class="field-group">
+                    <label class="field-label" for="ath-gender-input">Gênero</label>
+                    <div class="field">
+                      <span class="material-symbols-outlined icon-left">wc</span>
+                      <select id="ath-gender-input" onchange="syncAthletePreview()">
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                        <option value="Outro">Outro</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Data de Nascimento -->
+                  <div class="field-group">
+                    <label class="field-label" for="ath-dob-input">Data de Nascimento</label>
+                    <div class="field">
+                      <span class="material-symbols-outlined icon-left">cake</span>
+                      <input type="date" id="ath-dob-input" onchange="handleAthleteDobChange(this.value)">
+                    </div>
+                  </div>
+
+                  <!-- Idade Calculada -->
+                  <div class="field-group">
+                    <label class="field-label">Idade Calculada</label>
+                    <div class="field" style="background: var(--surface-high);">
+                      <span class="material-symbols-outlined icon-left">pin</span>
+                      <input type="text" id="ath-age-display" readonly placeholder="Calculada automaticamente">
+                    </div>
+                  </div>
+
+                  <!-- Telefone (preenchido) -->
+                  <div class="field-group">
+                    <label class="field-label" for="ath-phone-input">Telefone de Contato</label>
+                    <div class="field">
+                      <span class="material-symbols-outlined icon-left">call</span>
+                      <input type="tel" id="ath-phone-input" placeholder="(11) 98765-4321">
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Botão de Salvar Atleta -->
+                <div class="form-actions-row">
+                  <button class="btn btn-primary" id="btn-save-athlete" type="button" onclick="saveAthleteProfile()" style="max-width: 320px;">
+                    <span class="material-symbols-outlined">sports_basketball</span>
+                    <span>Salvar Cadastro de Atleta</span>
+                  </button>
+                </div>
+
               </div>
+
+              <!-- Card Preview Visual do Atleta -->
+              <div class="athlete-card-preview-wrap">
+                <div class="card-title-group" style="margin-bottom: 12px;">
+                  <span class="section-number">PRÉVIA</span>
+                  <h3>Seu Card de Atleta</h3>
+                </div>
+
+                <div class="player-trading-card">
+                  <div class="player-card-photo">
+                    <img id="card-preview-img" src="" alt="" class="hidden">
+                    <div id="card-preview-fallback" class="player-fallback-icon">
+                      <span class="material-symbols-outlined">person</span>
+                    </div>
+                    <span class="player-status-badge">Ativo</span>
+                  </div>
+                  <div class="player-card-body">
+                    <h4 id="card-preview-name">Nome do Atleta</h4>
+                    <span id="card-preview-pos" class="player-pos-pill">Armador (PG)</span>
+                    
+                    <div class="player-stats-mini">
+                      <div>
+                        <span class="stat-h">Altura</span>
+                        <span id="card-preview-height" class="stat-v">--</span>
+                      </div>
+                      <div>
+                        <span class="stat-h">Peso</span>
+                        <span id="card-preview-weight" class="stat-v">--</span>
+                      </div>
+                      <div>
+                        <span class="stat-h">Idade</span>
+                        <span id="card-preview-age" class="stat-v">--</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <p style="font-size: 12px; color: var(--secondary); text-align: center; margin-top: 10px;">
+                  Assim que salvo, seu card estará disponível para convites em rachões e torneios.
+                </p>
+              </div>
+
             </div>
 
-            <button class="btn btn-primary" type="button" onclick="showToast('Configurações salvas para a mesa!', 'success')">
-              <span>Salvar Regras</span>
-            </button>
           </div>
         </div>
 
