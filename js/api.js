@@ -179,3 +179,18 @@ async function apiBuscar(aba, coluna, valor, securityId) {
   });
 }
 
+/**
+ * Faz upload de imagem via Base64.
+ */
+async function apiUploadImage(imageUrl, idBusca, folderId, columnBusca, columnLink, securityId) {
+  return await callBackend('upload_image', {
+    aba: 'USERS',
+    imageUrl: imageUrl, // O Google Apps Script processará este base64
+    id_busca: idBusca,
+    folderid: folderId || 'IMAGE_EQUIPES_FOLDER_ID',
+    column_busca: columnBusca || '1',
+    column_link: columnLink || '5',
+    security_id: securityId
+  });
+}
+

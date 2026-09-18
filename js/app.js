@@ -169,6 +169,7 @@ async function saveUserProfile() {
   try {
     // Se houver sessão real conectada, envia para a API na aba USERS
     if (session.security_id) {
+      // 1. Atualiza os dados de texto
       const response = await apiUpdateUser(uniqueId, userData, securityId);
       if (!response.success) {
         showToast(response.message || 'Erro ao atualizar dados.', 'error');
@@ -177,6 +178,28 @@ async function saveUserProfile() {
           btn.innerHTML = '<span class="material-symbols-outlined">save</span><span>Salvar e Concluir Cadastro</span>';
         }
         return;
+      }
+      
+      // 2. Faz o upload da imagem se for um Base64 novo
+      if (imagemBase64 && imagemBase64.startsWith('data:image')) {
+        const uploadResponse = await apiUploadImage(
+          imagemBase64, 
+          uniqueId, // id_busca
+          'IMAGE_EQUIPES_FOLDER_ID', // folderid (ou IMAGE_USERS_FOLDER_ID se você ajustar no backend)
+          '1', // column_busca
+          '5', // column_link
+          securityId
+        );
+        
+        if (!uploadResponse.success) {
+          showToast('Dados salvos, mas erro ao enviar foto.', 'warn');
+        } else {
+          // Atualiza o userData com o link retornado pelo backend
+          if (uploadResponse.link) {
+            userData.Url_Imagem = uploadResponse.link;
+            userData.Imagem = uploadResponse.link;
+          }
+        }
       }
     }
 
