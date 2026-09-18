@@ -774,15 +774,42 @@ document.addEventListener('DOMContentLoaded', function () {
   updateClock();
   setInterval(updateClock, 30000);
 
+  // Verifica se há parâmetros de recuperação de senha na URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const resetToken = urlParams.get('token') || urlParams.get('code') || urlParams.get('reset_id');
+
   const session = getStoredSession();
-  if (session && session.email) {
+  
+  if (resetToken) {
+    // Modo de Recuperação de Senha
+    switchMainGroup('group-auth');
+    showAuthScreen('reset');
+    
+    // Oculta a etapa de e-mail e mostra a etapa de código e nova senha
+    const stepEmail = document.getElementById('reset-step-email');
+    const stepPassword = document.getElementById('reset-step-password');
+    if (stepEmail) stepEmail.classList.add('hidden');
+    if (stepPassword) stepPassword.classList.remove('hidden');
+    
+    // Preenche automaticamente o código e foca na nova senha
+    const inputCode = document.getElementById('reset-code');
+    if (inputCode) inputCode.value = resetToken;
+    
+    // Limpa a URL para o token não ficar visível (opcional, visualmente mais limpo)
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    showToast('Token de recuperação identificado. Digite sua nova senha.', 'success');
+  } 
+  else if (session && session.email) {
+    // Usuário já logado
     updateOperatorHeader(session.email);
     if (session.userData) {
       markStep1Completed(session.userData);
     }
     switchMainGroup('group-dashboard');
     navigateTo('subview-complete-profile');
-  } else {
+  } 
+  else {
     // Por padrão abre no grupo de autenticação / login
     switchMainGroup('group-auth');
     showAuthScreen('login');
