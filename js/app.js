@@ -633,6 +633,99 @@ async function registerUser() {
   }
 }
 
+async function requestReset() {
+  const email = value('reset-email');
+  if (!email) {
+    showToast('Informe seu e-mail de cadastro.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('reset-request-button');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Enviando...</span>';
+  }
+
+  try {
+    const response = await apiRequestReset(email);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Enviar link de recuperação</span><span class="material-symbols-outlined">arrow_forward</span>';
+    }
+
+    if (!response.success) {
+      showToast(response.message || 'Erro ao solicitar recuperação.', 'error');
+      return;
+    }
+
+    showToast('Código enviado! Verifique seu e-mail.', 'success');
+    const stepEmail = document.getElementById('reset-step-email');
+    const stepPassword = document.getElementById('reset-step-password');
+    if (stepEmail) stepEmail.classList.add('hidden');
+    if (stepPassword) stepPassword.classList.remove('hidden');
+
+  } catch (error) {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Enviar link de recuperação</span><span class="material-symbols-outlined">arrow_forward</span>';
+    }
+    showToast('Erro ao conectar ao servidor.', 'error');
+  }
+}
+
+async function resetPassword() {
+  const code = value('reset-code');
+  const newPassword = value('reset-password');
+
+  if (!code || !newPassword) {
+    showToast('Preencha o código e a nova senha.', 'error');
+    return;
+  }
+  if (newPassword.length < 6) {
+    showToast('A senha deve ter pelo menos 6 caracteres.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('reset-password-button');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Salvando...</span>';
+  }
+
+  try {
+    const response = await apiResetPassword(code, newPassword);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Salvar Nova Senha</span>';
+    }
+
+    if (!response.success) {
+      showToast(response.message || 'Código inválido ou expirado.', 'error');
+      return;
+    }
+
+    showToast('Senha alterada com sucesso! Faça login.', 'success');
+    
+    // Restaura a tela de reset para o estado inicial
+    const stepEmail = document.getElementById('reset-step-email');
+    const stepPassword = document.getElementById('reset-step-password');
+    if (stepEmail) stepEmail.classList.remove('hidden');
+    if (stepPassword) stepPassword.classList.add('hidden');
+    document.getElementById('reset-email').value = '';
+    document.getElementById('reset-code').value = '';
+    document.getElementById('reset-password').value = '';
+
+    showAuthScreen('login');
+
+  } catch (error) {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Salvar Nova Senha</span>';
+    }
+    showToast('Erro ao conectar ao servidor.', 'error');
+  }
+}
+
 function logout() {
   clearStoredSession();
   showToast('Sessão encerrada com segurança.');
