@@ -1,0 +1,26 @@
+{
+  "name": "front-end",
+  "version": "1.0.0",
+  "description": "> Gerenciamento de jogos de basquete, campeonatos, ligas, torneios e peladas (rachão).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/delsystensoftwere-alt/na-quadra.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/delsystensoftwere-alt/na-quadra/issues"
+  },
+  "homepage": "https://github.com/delsystensoftwere-alt/na-quadra#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie": "^2.0.1",
+    "jsonwebtoken": "^9.0.3"
+  }
+}

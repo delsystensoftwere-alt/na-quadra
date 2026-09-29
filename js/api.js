@@ -9,7 +9,7 @@ const API_CONFIG = {
   VERCEL_PROXY_URL: '/api/auth',
 
   // URL direta do Apps Script (usada como fallback em ambiente local se necessário)
-  APPS_SCRIPT_DIRECT_URL: 'https://script.google.com/macros/s/AKfycbxXojAkfUcX5xn05fEpJmGrxlqdctuQZGcW4umGhQ3u259osyH_oxw7sqvj-foEknoa/exec',
+  APPS_SCRIPT_DIRECT_URL: 'https://script.google.com/macros/s/AKfycbxg68DFpLDlZSZbZlOwZbNcHz-PX9m8csovyhdg72FPl-Gye9OET-lbUswSLbWZluy7/exec',
 
   USERS_SHEET: 'USERS',
 
@@ -99,19 +99,33 @@ async function callBackend(action, params = {}) {
 ------------------------------------------------------------- */
 
 async function apiLogin(email, senha) {
-  return await callBackend(API_CONFIG.ACTIONS.LOGIN, {
-    aba: API_CONFIG.USERS_SHEET,
-    email: email,
-    senha: senha
-  });
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha })
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Login error:', error);
+    return { success: false, message: 'Erro ao conectar com o servidor.' };
+  }
 }
 
 async function apiRegister(email, senha) {
-  return await callBackend(API_CONFIG.ACTIONS.REGISTER, {
-    aba: API_CONFIG.USERS_SHEET,
-    email: email,
-    senha: senha
-  });
+  try {
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha })
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Register error:', error);
+    return { success: false, message: 'Erro ao conectar com o servidor.' };
+  }
 }
 
 async function apiRequestReset(email) {
@@ -146,13 +160,15 @@ async function apiLogout(securityId) {
 
 /**
  * Atualiza o cadastro do usuário na aba USERS (Etapa 1).
+ * Os campos a serem alterados são enviados dentro do objeto 'dados',
+ * separados dos parâmetros de controle (acao, aba, unique_id, security_id).
  */
 async function apiUpdateUser(uniqueId, userData, securityId) {
   return await callBackend('update', {
     aba: 'USERS',
     unique_id: uniqueId,
     security_id: securityId,
-    ...userData
+    dados: userData  // campos dentro de dados{} conforme estrutura do backend
   });
 }
 
