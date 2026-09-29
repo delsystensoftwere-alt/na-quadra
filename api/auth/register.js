@@ -1,8 +1,8 @@
-import { Auth } from '../_lib/auth';
-import { AppsScriptProvider } from '../_lib/appsScriptProvider';
-import { serialize } from 'cookie';
+const { Auth } = require('../_lib/auth');
+const { AppsScriptProvider } = require('../_lib/appsScriptProvider');
+const { serialize } = require('cookie');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // CORS Protection is handled via vercel.json
   
   if (req.method !== 'POST') {

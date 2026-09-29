@@ -5,12 +5,12 @@
  * mantendo a comunicação limpa e segura entre o Front-end e o Google Sheets.
  */
 
-import { parse } from 'cookie';
-import { Auth } from './_lib/auth';
+const { parse } = require('cookie');
+const { Auth } = require('./_lib/auth');
 
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxXojAkfUcX5xn05fEpJmGrxlqdctuQZGcW4umGhQ3u259osyH_oxw7sqvj-foEknoa/exec';
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Configuração de CORS para permitir requisições do frontend
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');

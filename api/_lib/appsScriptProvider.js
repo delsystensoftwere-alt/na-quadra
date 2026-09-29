@@ -2,7 +2,7 @@
 
 const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxXojAkfUcX5xn05fEpJmGrxlqdctuQZGcW4umGhQ3u259osyH_oxw7sqvj-foEknoa/exec';
 
-export const AppsScriptProvider = {
+const AppsScriptProvider = {
   /**
    * Envia a requisição POST para o Apps Script
    */
@@ -63,3 +63,5 @@ export const AppsScriptProvider = {
     });
   }
 };
+
+module.exports = { AppsScriptProvider };
