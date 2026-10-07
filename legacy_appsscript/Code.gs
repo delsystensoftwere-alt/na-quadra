@@ -13,7 +13,7 @@ const CONFIG = {
   // Não guardamos mais o ID da planilha aqui — o backend já sabe qual é a
   // sua, via Propriedades do Script (ALLOWED_SHEET_ID). Isso evita que o
   // ID fique visível em qualquer HTML/JS público.
-  BACKEND_URL: 'https://script.google.com/macros/s/AKfycbxXojAkfUcX5xn05fEpJmGrxlqdctuQZGcW4umGhQ3u259osyH_oxw7sqvj-foEknoa/exec',
+  BACKEND_URL: 'https://script.google.com/macros/s/AKfycbxg68DFpLDlZSZbZlOwZbNcHz-PX9m8csovyhdg72FPl-Gye9OET-lbUswSLbWZluy7/exec',
 
   // Aba utilizada pelas quatro operações de autenticação
   USERS_SHEET: 'USERS',

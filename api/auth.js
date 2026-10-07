@@ -7,7 +7,7 @@
 
 const { Auth } = require('./_lib/auth');
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxXojAkfUcX5xn05fEpJmGrxlqdctuQZGcW4umGhQ3u259osyH_oxw7sqvj-foEknoa/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxg68DFpLDlZSZbZlOwZbNcHz-PX9m8csovyhdg72FPl-Gye9OET-lbUswSLbWZluy7/exec';
 
 module.exports = async function handler(req, res) {
   // Configuração de CORS para permitir requisições do frontend
