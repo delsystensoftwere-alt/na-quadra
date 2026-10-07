@@ -45,9 +45,7 @@ module.exports = async function handler(req, res) {
 
     // Intercept reset_password to hash the new password on Vercel
     if (payload.acao === 'reset_password' && payload.nova_senha) {
-      const { hash, salt } = Auth.hashPassword(payload.nova_senha);
-      payload.nova_senha = hash;
-      payload.salt = salt; // Apps Script MUST update the salt column too!
+      payload.nova_senha = await Auth.hashPassword(payload.nova_senha);
     }
 
     const response = await fetch(BACKEND_URL, {
