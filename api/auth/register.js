@@ -1,6 +1,5 @@
 const { Auth } = require('../_lib/auth');
 const { AppsScriptProvider } = require('../_lib/appsScriptProvider');
-const { serialize } = require('cookie');
 
 module.exports = async function handler(req, res) {
   // CORS Protection is handled via vercel.json
@@ -30,13 +29,8 @@ module.exports = async function handler(req, res) {
     const token = Auth.generateToken({ email: email, security_id: backendResponse.security_id });
 
     // 4. Set HttpOnly Cookie
-    res.setHeader('Set-Cookie', serialize('na_quadra_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: '/'
-    }));
+    const isProd = process.env.NODE_ENV !== 'development';
+    res.setHeader('Set-Cookie', `na_quadra_token=${token}; HttpOnly; ${isProd ? 'Secure; ' : ''}SameSite=Strict; Max-Age=604800; Path=/`);
 
     // Do NOT send the raw security_id or password back to the client
     return res.status(200).json({

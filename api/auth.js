@@ -5,7 +5,7 @@
  * mantendo a comunicação limpa e segura entre o Front-end e o Google Sheets.
  */
 
-const { parse } = require('cookie');
+const { parseCookie } = require('cookie');
 const { Auth } = require('./_lib/auth');
 
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxXojAkfUcX5xn05fEpJmGrxlqdctuQZGcW4umGhQ3u259osyH_oxw7sqvj-foEknoa/exec';
@@ -35,7 +35,7 @@ module.exports = async function handler(req, res) {
     // Automatic Security Injection: 
     // If the client doesn't send security_id, try to extract it from the HttpOnly Cookie
     if (!payload.security_id && req.headers.cookie) {
-      const cookies = parse(req.headers.cookie);
+      const cookies = parseCookie(req.headers.cookie);
       if (cookies.na_quadra_token) {
         const decoded = Auth.verifyToken(cookies.na_quadra_token);
         if (decoded && decoded.security_id) {
